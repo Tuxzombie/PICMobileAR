@@ -20,6 +20,8 @@ import com.augumenta.agapi.AugumentaManager;
 import com.augumenta.agapi.CameraFrameProvider;
 import com.augumenta.agapi.HandPoseEvent;
 import com.augumenta.agapi.HandPoseListener;
+import com.augumenta.agapi.HandTransitionEvent;
+import com.augumenta.agapi.HandTransitionListener;
 import com.augumenta.agapi.Poses;
 
 import dk.picit.picmobilear.handPose.ShowPose;
@@ -71,6 +73,8 @@ public class LeftFragment extends Fragment {
 
         augumentaManager.registerListener(showPoseListener, Poses.P001);
 
+//        augumentaManager.registerListener(transitionListner, Poses.P001, Poses.P032);
+
         // Check if the Camera permission is already available
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -115,5 +119,13 @@ public class LeftFragment extends Fragment {
         Log.d(TAG, "Requesting CAMERA permission");
         ActivityCompat.requestPermissions(this.getActivity(), new String[] { Manifest.permission.CAMERA }, PERMISSION_REQUEST_CAMERA);
     }
+
+//    private HandTransitionListener transitionListner = new HandTransitionListener() {
+//        @Override
+//        public void onTransition(HandTransitionEvent handTransitionEvent) {
+//            Log.d(TAG, "onTransition: " + handTransitionEvent);
+//            pushButton();
+//        }
+//    };
 
 }
