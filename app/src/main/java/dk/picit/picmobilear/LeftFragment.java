@@ -73,7 +73,7 @@ public class LeftFragment extends Fragment {
 
         augumentaManager.registerListener(showPoseListener, Poses.P001);
 
-//        augumentaManager.registerListener(transitionListner, Poses.P001, Poses.P032);
+        augumentaManager.registerListener(transitionListner, Poses.P001, Poses.P032);
 
         // Check if the Camera permission is already available
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.CAMERA)
@@ -120,12 +120,17 @@ public class LeftFragment extends Fragment {
         ActivityCompat.requestPermissions(this.getActivity(), new String[] { Manifest.permission.CAMERA }, PERMISSION_REQUEST_CAMERA);
     }
 
-//    private HandTransitionListener transitionListner = new HandTransitionListener() {
-//        @Override
-//        public void onTransition(HandTransitionEvent handTransitionEvent) {
-//            Log.d(TAG, "onTransition: " + handTransitionEvent);
-//            pushButton();
-//        }
-//    };
+    private HandTransitionListener transitionListner = new HandTransitionListener() {
+        @Override
+        public void onTransition(HandTransitionEvent handTransitionEvent) {
+            Log.d(TAG, "onTransition: " + handTransitionEvent);
+            view.post(new Runnable() {
+                @Override
+                public void run() {
+                    pushButton();
+                }
+            });
+        }
+    };
 
 }
