@@ -66,10 +66,12 @@ public class TopFragment extends Fragment {
         //listner der ser på hvornår viewet er klar til at få billede på fra kameraet
         camView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            public void onSurfaceTextureAvailable(SurfaceTexture surface, final int width, int height) {
                 mPreviewSurfaceTexture = surface;
 //                float scale = height/100f;
 //                camView.setScaleY(scale);
+                camView.setTranslationX(-((float)width/4));
+                camView.setTranslationY(-20f);
 
                 CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
                 try {
@@ -123,9 +125,7 @@ public class TopFragment extends Fragment {
                                         try {
                                             request = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                                             request.addTarget(previewSurface);
-                                            request.set(CaptureRequest.SCALER_CROP_REGION, new Rect(100,100,200,200));
-
-                                            mSession.setRepeatingRequest(request.build(), new CameraCaptureSession.CaptureCallback() {
+                                              mSession.setRepeatingRequest(request.build(), new CameraCaptureSession.CaptureCallback() {
                                                 @Override
                                                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                                                     // updated values can be found here
@@ -163,7 +163,8 @@ public class TopFragment extends Fragment {
 
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+                camView.setTranslationX(-((float)width/4));
+                camView.setTranslationY(-20f);
             }
 
             @Override
