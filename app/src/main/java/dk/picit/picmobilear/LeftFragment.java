@@ -1,9 +1,7 @@
 package dk.picit.picmobilear;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -12,14 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.augumenta.agapi.AugumentaManager;
 import com.augumenta.agapi.CameraFrameProvider;
-import com.augumenta.agapi.HandPoseEvent;
-import com.augumenta.agapi.HandPoseListener;
 import com.augumenta.agapi.HandTransitionEvent;
 import com.augumenta.agapi.HandTransitionListener;
 import com.augumenta.agapi.Poses;
@@ -35,7 +30,8 @@ public class LeftFragment extends Fragment {
     private View view;
     private CameraFrameProvider cameraFrameProvider;
     private AugumentaManager augumentaManager;
-    private HandPoseListener showPoseListener;
+    private ShowPose showPoseListener;
+    private HandTransitionListener selectTransitionListener;
 
     private int count = 0;
     private Button button;
@@ -52,6 +48,7 @@ public class LeftFragment extends Fragment {
         button = (Button) view.findViewById(R.id.button);
         button.setOnClickListener(buttonClickListener);
         showPoseListener = new ShowPose(view, getActivity());
+        selectTransitionListener = showPoseListener.getSelectTransitionListner();
 
         cameraFrameProvider = new CameraFrameProvider();
         cameraFrameProvider.setCameraPreview(null);
@@ -71,9 +68,17 @@ public class LeftFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        augumentaManager.registerListener(showPoseListener, Poses.P001);
+        augumentaManager.registerListener(showPoseListener, Poses.P229);
 
-        augumentaManager.registerListener(transitionListner, Poses.P001, Poses.P032);
+        augumentaManager.registerListener(showPoseListener, Poses.P141);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P016);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P201);
+
+        augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
+
+        augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
 
         // Check if the Camera permission is already available
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.CAMERA)
@@ -120,16 +125,11 @@ public class LeftFragment extends Fragment {
         ActivityCompat.requestPermissions(this.getActivity(), new String[] { Manifest.permission.CAMERA }, PERMISSION_REQUEST_CAMERA);
     }
 
-    private HandTransitionListener transitionListner = new HandTransitionListener() {
+    private HandTransitionListener backTransitionListener = new HandTransitionListener() {
         @Override
         public void onTransition(HandTransitionEvent handTransitionEvent) {
-            Log.d(TAG, "onTransition: " + handTransitionEvent);
-            view.post(new Runnable() {
-                @Override
-                public void run() {
-                    pushButton();
-                }
-            });
+            // Close app
+            getActivity().finish();
         }
     };
 

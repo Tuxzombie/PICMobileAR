@@ -23,9 +23,14 @@
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_marginBottom="80dp"
             android:text="Button" />
 
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="Button" />
 
         <TextView
             android:id="@+id/textViewCount"
