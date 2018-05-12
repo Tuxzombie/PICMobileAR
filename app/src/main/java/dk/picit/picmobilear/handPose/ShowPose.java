@@ -30,6 +30,7 @@ public class ShowPose implements HandPoseListener {
     // the edges
     public final RelativeMargin margin = new RelativeMargin(MARGIN_LEFT, MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM);
 
+    // maps poses to image of the pose
     private static final SparseArray<Integer> POSE_CURSORS = new SparseArray<>();
     static {
         POSE_CURSORS.put(Poses.P229, R.drawable.p001);
@@ -54,6 +55,7 @@ public class ShowPose implements HandPoseListener {
 
     public ShowPose(View view, FragmentActivity activity){
         this.view = view;
+        // gets the layout of the activity
         frameLayout = (FrameLayout) activity.findViewById(android.R.id.content);
     }
 
@@ -66,12 +68,17 @@ public class ShowPose implements HandPoseListener {
      */
     private void moveCursor(HandPoseEvent event) {
         // get event absolute position on the screen
+        // event.rect.centerX gets x position on the screen, 0 is the left side
+        // 1 is the right side
         int x = (int) (margin.translateX(event.rect.centerX()) * frameLayout.getWidth());
+        // not sure why POSE_IMAGE_SIZE is subtracted, but the cursor is
+        // placed better when 'clicking'
         int y = (int) (margin.translateY(event.rect.centerY()) * frameLayout.getHeight() - POSE_IMAGE_SIZE);
+
 
         int pose = event.handpose.pose();
 
-        // compensate for the shift in position between P001 and P032
+        // compensate for the shift in position between hover and touch pose
         if (pose == POSE_TOUCH) {
             if (previousPose == POSE_HOVER) {
                 cursorDeltaX = cursorX - x;
@@ -87,26 +94,27 @@ public class ShowPose implements HandPoseListener {
 
     /**
      * Update cursor views based on the event
-     * Positions the cursor on the screen and selects the view to use
-     * based on the handside.
+     * Positions the cursor on the screen
      * @param handPoseEvent pose event
      */
     private void updateCursor(HandPoseEvent handPoseEvent, ImageView image) {
 
-        int w = POSE_IMAGE_SIZE;
-        int h = POSE_IMAGE_SIZE;
-
         int x = (int) (margin.translateX(handPoseEvent.rect.centerX()) * frameLayout.getWidth());
         int y = (int) (margin.translateY(handPoseEvent.rect.centerY()) * frameLayout.getHeight());
 
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(w, h);
-        lp.leftMargin = x - (w/2);
-        lp.topMargin = y - (h/2);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(POSE_IMAGE_SIZE, POSE_IMAGE_SIZE);
+        lp.leftMargin = x - (POSE_IMAGE_SIZE/2);
+        lp.topMargin = y - (POSE_IMAGE_SIZE/2);
 
         image.setLayoutParams(lp);
     }
 
 
+    /**
+     * Called when a pose is detected
+     * @param handPoseEvent
+     * @param newDetect is it a new pose
+     */
     @Override
     public void onDetected(final HandPoseEvent handPoseEvent, final boolean newDetect) {
         Log.d(TAG, "onDetected: " + handPoseEvent);
@@ -116,6 +124,7 @@ public class ShowPose implements HandPoseListener {
                 if(newDetect){
                     ImageView image = new ImageView(view.getContext());
                     image.setImageResource(POSE_CURSORS.get(handPoseEvent.handpose.pose()));
+                    // rotate cursor if right hand is used
                     if(handPoseEvent.handpose.handside() == HandPose.HandSide.RIGHT){
                         image.setRotationY(180);
                     }
@@ -140,6 +149,10 @@ public class ShowPose implements HandPoseListener {
         });
     }
 
+    /**
+     * when the handpose is lost from detection
+     * @param handPoseEvent
+     */
     @Override
     public void onLost(final HandPoseEvent handPoseEvent) {
 

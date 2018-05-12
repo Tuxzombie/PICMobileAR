@@ -25,7 +25,7 @@ package dk.picit.picmobilear.handPose;
 import android.graphics.PointF;
 
 /**
- * RelativeMargin is a helper class used by PoseLayout and PoseCursorLayout. It helps
+ * RelativeMargin is a helper class used by ShowPose. It helps
  * translating between the camera coordinates and screen coordinates.
  */
 public class RelativeMargin {

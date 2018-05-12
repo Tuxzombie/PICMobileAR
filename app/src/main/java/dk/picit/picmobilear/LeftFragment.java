@@ -68,6 +68,7 @@ public class LeftFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        // add listener for pose 229
         augumentaManager.registerListener(showPoseListener, Poses.P229);
 
         augumentaManager.registerListener(showPoseListener, Poses.P141);
@@ -76,6 +77,7 @@ public class LeftFragment extends Fragment {
 
         augumentaManager.registerListener(showPoseListener, Poses.P201);
 
+        // add listener for transition from pose 229 to 141
         augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
 
         augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
