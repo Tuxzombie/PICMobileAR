@@ -2,11 +2,13 @@ package dk.picit.picmobilear;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -39,6 +41,7 @@ public class LeftFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cameraInfo = new android.hardware.Camera.CameraInfo();
     }
 
     @Override
@@ -119,6 +122,7 @@ public class LeftFragment extends Fragment {
         if (!augumentaManager.start()) {
             Toast.makeText(this.getContext(), "Failed to open camera!", Toast.LENGTH_LONG).show();
         }
+        updateDisplayOrientation();
     }
 
     private void requestCameraPermission() {
@@ -134,5 +138,40 @@ public class LeftFragment extends Fragment {
             getActivity().finish();
         }
     };
+
+
+    private android.hardware.Camera.CameraInfo cameraInfo;
+
+    private void updateDisplayOrientation() {
+        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+        CameraFrameProvider cameraFrameProvider = ((CameraFrameProvider) augumentaManager.getFrameProvider());
+        if(cameraFrameProvider!=null) {
+            cameraFrameProvider.setDisplayOrientation(degrees);
+            int result;
+            android.hardware.Camera.getCameraInfo(cameraFrameProvider.getCameraId(), cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                result = (cameraInfo.orientation + degrees) % 360;
+                result = (360 - result) % 360;  // compensate the mirror
+            } else {  // back-facing
+                result = (cameraInfo.orientation - degrees + 360) % 360;
+            }
+            cameraFrameProvider.getCamera().setDisplayOrientation(result);
+        }
+    }
 
 }

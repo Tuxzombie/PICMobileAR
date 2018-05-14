@@ -52,7 +52,7 @@ public class TopFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_top, container, false);
 
-        onClickOCR(view);
+       // onClickOCR(view);
 
         return view;
     }
