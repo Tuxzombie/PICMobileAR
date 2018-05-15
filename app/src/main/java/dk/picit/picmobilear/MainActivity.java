@@ -3,6 +3,7 @@ package dk.picit.picmobilear;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         cameraFrameProvider = new CameraFrameProvider();
         cameraFrameProvider.setCameraPreview(null);
+
+
 
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         String camId = null;
@@ -124,4 +127,14 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     };
+
+    private void stopAugumentaManager()
+    {
+
+    }
+
+    private void takePicture()
+    {
+
+    }
 }
