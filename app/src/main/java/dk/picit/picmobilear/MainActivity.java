@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         cameraFrameProvider.setCameraPreview(null);
 
 
+
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         String camId = null;
         int cameraOrientation = 0;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         cameraFrameProvider.setDisplayOrientation(cameraOrientation);
 
-        try {
+        try{
             augumentaManager = AugumentaManager.getInstance(this, cameraFrameProvider);
         } catch (IllegalStateException e) {
             // Something went wrong while authenticating license
@@ -94,23 +95,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public void onResume() {
         super.onResume();
-
-        // add listener for pose 229
-        augumentaManager.registerListener(showPoseListener, Poses.P229);
-
-        augumentaManager.registerListener(showPoseListener, Poses.P141);
-
-        augumentaManager.registerListener(showPoseListener, Poses.P016);
-
-        augumentaManager.registerListener(showPoseListener, Poses.P201);
-
-        // add listener for transition from pose 229 to 141
-        augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
-
-        augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
 
         // Check if the Camera permission is already available
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -127,22 +115,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        stopAugumentaManager();
 
-        augumentaManager.unregisterAllListeners();
-        augumentaManager.stop();
     }
 
 
-    private void startAugumentaManager() {
+    private void startAugumentaManager(){
+        // add listener for pose 229
+        augumentaManager.registerListener(showPoseListener, Poses.P229);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P141);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P016);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P201);
+
+        // add listener for transition from pose 229 to 141
+        augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
+
+        augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
+
         if (!augumentaManager.start()) {
             Toast.makeText(this, "Failed to open camera!", Toast.LENGTH_LONG).show();
         }
-//        updateDisplayOrientation();
     }
 
     private void requestCameraPermission() {
         // Request CAMERA permission from user
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, PERMISSION_REQUEST_CAMERA);
     }
 
     private HandTransitionListener backTransitionListener = new HandTransitionListener() {
@@ -154,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void stopAugumentaManager() {
-
+        augumentaManager.unregisterAllListeners();
+        augumentaManager.stop();
     }
 
     private void takePicture() {
