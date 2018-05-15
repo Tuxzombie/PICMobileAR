@@ -72,9 +72,7 @@ public class ShowPose implements HandPoseListener {
         // event.rect.centerX gets x position on the screen, 0 is the left side
         // 1 is the right side
         int x = (int) (margin.translateX(event.rect.centerX()) * frameLayout.getWidth());
-        // not sure why POSE_IMAGE_SIZE is subtracted, but the cursor is
-        // placed better when 'clicking'
-        int y = (int) (margin.translateY(event.rect.centerY()) * frameLayout.getHeight() - POSE_IMAGE_SIZE);
+        int y = (int) (margin.translateY(event.rect.centerY()) * frameLayout.getHeight());
 
 
         int pose = event.handpose.pose();

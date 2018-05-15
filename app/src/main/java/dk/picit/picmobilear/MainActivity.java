@@ -73,20 +73,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        // add listener for pose 229
-        augumentaManager.registerListener(showPoseListener, Poses.P229);
-
-        augumentaManager.registerListener(showPoseListener, Poses.P141);
-
-        augumentaManager.registerListener(showPoseListener, Poses.P016);
-
-        augumentaManager.registerListener(showPoseListener, Poses.P201);
-
-        // add listener for transition from pose 229 to 141
-        augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
-
-        augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
-
         // Check if the Camera permission is already available
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -102,17 +88,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        stopAugumentaManager();
 
-        augumentaManager.unregisterAllListeners();
-        augumentaManager.stop();
     }
 
 
     private void startAugumentaManager(){
+        // add listener for pose 229
+        augumentaManager.registerListener(showPoseListener, Poses.P229);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P141);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P016);
+
+        augumentaManager.registerListener(showPoseListener, Poses.P201);
+
+        // add listener for transition from pose 229 to 141
+        augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
+
+        augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
+
         if (!augumentaManager.start()) {
             Toast.makeText(this, "Failed to open camera!", Toast.LENGTH_LONG).show();
         }
-//        updateDisplayOrientation();
     }
 
     private void requestCameraPermission() {
@@ -128,9 +126,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void stopAugumentaManager()
-    {
-
+    private void stopAugumentaManager() {
+        augumentaManager.unregisterAllListeners();
+        augumentaManager.stop();
     }
 
     private void takePicture()
