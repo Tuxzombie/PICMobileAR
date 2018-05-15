@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ import com.augumenta.agapi.Poses;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private Surface previewSurface = null;
     private SurfaceTexture mPreviewSurfaceTexture = null;
     private Surface jpegCaptureSurface = null;
+    private String encodedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
                             maxPlacement = i;
                         }
                     }
-                    Log.d("MaxWidth", currentMax+"");
 
                     ImageReader jpegImageReader = ImageReader.newInstance(jpegSizes[maxPlacement].getWidth(), jpegSizes[maxPlacement].getHeight(), ImageFormat.JPEG, 1);
                     jpegImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
@@ -201,9 +203,16 @@ public class MainActivity extends AppCompatActivity {
                             FileOutputStream outImage = null;
                             try {
                                 File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
+                                File encodedFile = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera", "encodedPic"+ System.currentTimeMillis()+".txt");
                                 outImage = new FileOutputStream(file);
                                 outImage.write(bytes);
                                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+
+                                encodedImage = Base64.encodeToString(bytes, Base64.DEFAULT);
+                                PrintWriter outEncodedImage = new PrintWriter(encodedFile);
+                                outEncodedImage.write(encodedImage);
+                                outEncodedImage.close();
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
