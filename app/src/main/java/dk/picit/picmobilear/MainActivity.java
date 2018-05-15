@@ -178,7 +178,19 @@ public class MainActivity extends AppCompatActivity {
                     StreamConfigurationMap streamConfigs = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                     Size[] jpegSizes = streamConfigs.getOutputSizes(ImageFormat.JPEG);
 
-                    ImageReader jpegImageReader = ImageReader.newInstance(jpegSizes[0].getWidth(), jpegSizes[0].getHeight(), ImageFormat.JPEG, 1);
+                    //find max resulution width
+                    int currentMax = jpegSizes[0].getWidth();
+                    int maxPlacement = 0;
+                    for(int i = 0; i < jpegSizes.length; i++)
+                    {
+                        if(currentMax < jpegSizes[i].getWidth()){
+                            currentMax = jpegSizes[i].getWidth();
+                            maxPlacement = i;
+                        }
+                    }
+                    Log.d("MaxWidth", currentMax+"");
+
+                    ImageReader jpegImageReader = ImageReader.newInstance(jpegSizes[maxPlacement].getWidth(), jpegSizes[maxPlacement].getHeight(), ImageFormat.JPEG, 1);
                     jpegImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                         @Override
                         public void onImageAvailable(ImageReader reader) {
