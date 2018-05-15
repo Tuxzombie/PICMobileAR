@@ -19,6 +19,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -185,7 +186,8 @@ public class MainActivity extends AppCompatActivity {
                             buffer.get(bytes);
                             FileOutputStream outImage = null;
                             try {
-                                File file = new File("/storage/sdcard0/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
+
+                                File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
                                 outImage = new FileOutputStream(file);
                                 outImage.write(bytes);
                                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
