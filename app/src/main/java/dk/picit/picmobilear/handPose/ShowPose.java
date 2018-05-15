@@ -177,6 +177,9 @@ public class ShowPose implements HandPoseListener {
         return selectTransitionListner;
     }
 
+    /**
+     * Listner for transition from one hand pose to another
+     */
     private HandTransitionListener selectTransitionListner = new HandTransitionListener() {
         @Override
         public void onTransition(HandTransitionEvent handTransitionEvent) {
@@ -185,7 +188,9 @@ public class ShowPose implements HandPoseListener {
                 @Override
                 public void run() {
                     long now = SystemClock.uptimeMillis();
+                    // press event at (cursorX,cursorY)
                     frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, cursorX, cursorY, 0));
+                    // release event at (cursorX,cursorY)
                     frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now +1, MotionEvent.ACTION_UP, cursorX, cursorY, 0));
                 }
             });
