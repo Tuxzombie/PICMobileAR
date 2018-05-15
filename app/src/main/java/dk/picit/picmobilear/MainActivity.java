@@ -2,6 +2,7 @@ package dk.picit.picmobilear;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -16,6 +17,9 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -121,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startAugumentaManager(){
+        cameraFrameProvider.start();
         // add listener for pose 229
         augumentaManager.registerListener(showPoseListener, Poses.P229);
 
@@ -155,10 +160,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void stopAugumentaManager() {
         augumentaManager.unregisterAllListeners();
+        cameraFrameProvider.stop();
         augumentaManager.stop();
     }
 
-    private void takePicture() {
+    public void takePicture() {
 
                 stopAugumentaManager();
 
@@ -169,18 +175,20 @@ public class MainActivity extends AppCompatActivity {
                     StreamConfigurationMap streamConfigs = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                     Size[] jpegSizes = streamConfigs.getOutputSizes(ImageFormat.JPEG);
 
-                    ImageReader jpegImageReader = ImageReader.newInstance(jpegSizes[jpegSizes.length - 1].getWidth(), jpegSizes[jpegSizes.length - 1].getHeight(), ImageFormat.JPEG, 1);
+                    ImageReader jpegImageReader = ImageReader.newInstance(jpegSizes[0].getWidth(), jpegSizes[0].getHeight(), ImageFormat.JPEG, 1);
                     jpegImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                         @Override
                         public void onImageAvailable(ImageReader reader) {
-                            Image image = reader.acquireLatestImage();
+                            Image image = reader.acquireNextImage();
                             ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                             byte[] bytes = new byte[buffer.remaining()];
                             buffer.get(bytes);
                             FileOutputStream outImage = null;
                             try {
-                                outImage = new FileOutputStream(File.createTempFile("pic"+System.currentTimeMillis(), ".jpg"));
+                                File file = new File("/storage/sdcard0/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
+                                outImage = new FileOutputStream(file);
                                 outImage.write(bytes);
+                                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -210,14 +218,19 @@ public class MainActivity extends AppCompatActivity {
                                         try {
                                             request = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
                                             request.addTarget(jpegCaptureSurface);
-                                            mSession.setRepeatingRequest(request.build(), new CameraCaptureSession.CaptureCallback() {
+                                            mSession.capture(request.build(), new CameraCaptureSession.CaptureCallback() {
                                                 @Override
-                                                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                                                public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+                                                    super.onCaptureCompleted(session, request, result);
+                                                    Log.d("Sven", "onOpened: " + cameraFrameProvider.isRunning());
                                                     mCamera.close();
+                                                    startAugumentaManager();
                                                 }
                                             }, null);
                                         } catch (CameraAccessException e) {
                                             e.printStackTrace();
+                                            mCamera.close();
+                                            startAugumentaManager();
                                         }
                                     }
 
@@ -244,7 +257,5 @@ public class MainActivity extends AppCompatActivity {
                 } catch (CameraAccessException e) {
                     e.printStackTrace();
                 }
-
-                startAugumentaManager();
             }
 }
