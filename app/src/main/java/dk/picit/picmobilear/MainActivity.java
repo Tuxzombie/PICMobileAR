@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.augumenta.agapi.AugumentaManager;
 import com.augumenta.agapi.CameraFrameProvider;
+import com.augumenta.agapi.HandPose;
 import com.augumenta.agapi.HandTransitionEvent;
 import com.augumenta.agapi.HandTransitionListener;
 import com.augumenta.agapi.Poses;
@@ -264,6 +265,8 @@ public class MainActivity extends AppCompatActivity {
                                 }, null);
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
+                                mCamera.close();
+                                startAugumentaManager();
                             }
                         }
 
