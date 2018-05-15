@@ -13,6 +13,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
@@ -186,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                             buffer.get(bytes);
                             FileOutputStream outImage = null;
                             try {
-
                                 File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
                                 outImage = new FileOutputStream(file);
                                 outImage.write(bytes);
@@ -219,6 +219,8 @@ public class MainActivity extends AppCompatActivity {
                                         CaptureRequest.Builder request = null;
                                         try {
                                             request = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                                            request.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
+                                            request.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
                                             request.addTarget(jpegCaptureSurface);
                                             mSession.capture(request.build(), new CameraCaptureSession.CaptureCallback() {
                                                 @Override
