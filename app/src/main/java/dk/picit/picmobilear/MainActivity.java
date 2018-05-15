@@ -61,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private AugumentaManager augumentaManager;
     private ShowPose showPoseListener;
     private HandTransitionListener selectTransitionListener;
-    private SurfaceTexture mPreviewSurfaceTexture = null;
     private CameraDevice mCamera = null;
     private CameraCaptureSession mSession = null;
     private Surface previewSurface = null;
+    private SurfaceTexture mPreviewSurfaceTexture = null;
     private Surface jpegCaptureSurface = null;
 
     @Override
@@ -198,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, null);
 
+                    mPreviewSurfaceTexture = new SurfaceTexture(1);
+                    previewSurface = new Surface(mPreviewSurfaceTexture);
                     jpegCaptureSurface = jpegImageReader.getSurface();
 
                     if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onOpened(@NonNull CameraDevice camera) {
                             mCamera = camera;
-                            List<Surface> surfaces = Arrays.asList(jpegCaptureSurface);
+                            List<Surface> surfaces = Arrays.asList(previewSurface, jpegCaptureSurface);
                             try {
                                 //Creates session witch keeps requesting a picture for the preview service
                                 mCamera.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
@@ -219,8 +221,24 @@ public class MainActivity extends AppCompatActivity {
                                         mSession = session;
                                         CaptureRequest.Builder request = null;
                                         try {
-                                            request = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                                            request = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                                             request.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+                                            request.addTarget(previewSurface);
+                                            mSession.setRepeatingRequest(request.build(), new CameraCaptureSession.CaptureCallback() {
+                                                @Override
+                                                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                                                    if(result.getFrameNumber() > 30)
+                                                    {
+                                                        try {
+                                                            mSession.abortCaptures();
+                                                        } catch (CameraAccessException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }, null);
+                                            request = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+//                                            request.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 //                                            request.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 //                                            request.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
                                             request.addTarget(jpegCaptureSurface);
@@ -228,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                                                     super.onCaptureCompleted(session, request, result);
-                                                    Log.d("Sven", "onOpened: " + cameraFrameProvider.isRunning());
                                                     mCamera.close();
                                                     startAugumentaManager();
                                                 }
