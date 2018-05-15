@@ -1,5 +1,6 @@
 package dk.picit.picmobilear.handPose;
 
+import android.app.Activity;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -43,8 +44,8 @@ public class ShowPose implements HandPoseListener {
     public int POSE_TOUCH = Poses.P141;
     private final int POSE_IMAGE_SIZE = 64;
 
-    private View view;
     private FrameLayout frameLayout;
+    private Activity activity;
     private int previousPose = -1;
     private int cursorX = 0;
     private int cursorY = 0;
@@ -53,10 +54,10 @@ public class ShowPose implements HandPoseListener {
     private int cursorDeltaY = 0;
 
 
-    public ShowPose(View view, FragmentActivity activity){
-        this.view = view;
+    public ShowPose(Activity activity){
         // gets the layout of the activity
-        frameLayout = (FrameLayout) activity.findViewById(android.R.id.content);
+        this.activity = activity;
+        frameLayout = (FrameLayout) activity.findViewById(R.id.frameLayout);
     }
 
     // cache created ImageViews to SparceArray using pose event id as a key
@@ -118,11 +119,11 @@ public class ShowPose implements HandPoseListener {
     @Override
     public void onDetected(final HandPoseEvent handPoseEvent, final boolean newDetect) {
         Log.d(TAG, "onDetected: " + handPoseEvent);
-        view.post(new Runnable() {
+        frameLayout.post(new Runnable() {
             @Override
             public void run() {
                 if(newDetect){
-                    ImageView image = new ImageView(view.getContext());
+                    ImageView image = new ImageView(activity);
                     image.setImageResource(POSE_CURSORS.get(handPoseEvent.handpose.pose()));
                     // rotate cursor if right hand is used
                     if(handPoseEvent.handpose.handside() == HandPose.HandSide.RIGHT){
@@ -155,8 +156,7 @@ public class ShowPose implements HandPoseListener {
      */
     @Override
     public void onLost(final HandPoseEvent handPoseEvent) {
-
-        view.post(new Runnable() {
+        frameLayout.post(new Runnable() {
             @Override
             public void run() {
                 ImageView image = poseImageArray.get(handPoseEvent.id);
@@ -181,12 +181,12 @@ public class ShowPose implements HandPoseListener {
         @Override
         public void onTransition(HandTransitionEvent handTransitionEvent) {
             Log.d(TAG, "onTransition: " + handTransitionEvent);
-            view.post(new Runnable() {
+            frameLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     long now = SystemClock.uptimeMillis();
-                    view.dispatchTouchEvent(MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, cursorX, cursorY, 0));
-                    view.dispatchTouchEvent(MotionEvent.obtain(now, now +1, MotionEvent.ACTION_UP, cursorX, cursorY, 0));
+                    frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, cursorX, cursorY, 0));
+                    frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now +1, MotionEvent.ACTION_UP, cursorX, cursorY, 0));
                 }
             });
         }
