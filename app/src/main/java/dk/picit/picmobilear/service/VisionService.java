@@ -1,5 +1,7 @@
 package dk.picit.picmobilear.service;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,29 +19,31 @@ public class VisionService {
     private HttpURLConnection connection;
 
     public VisionService(String img) {
-        try {
-            url = new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.addRequestProperty("Accept", "application/json");
-            connection.addRequestProperty("Content-Type", "application/json");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+//        try {
+//            url = new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
+//            connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("POST");
+//            connection.addRequestProperty("Accept", "application/json");
+//            connection.addRequestProperty("Content-Type", "application/json");
+//            connection.setDoInput(true);
+//            connection.setDoOutput(true);
 
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(createJSON(img));
-            writer.flush();
-            writer.close();
-            os.close();
-            connection.connect();
+            Log.d("Ser her!", createJSON(img));
 
-            connection.getResponseCode();
-            connection.getResponseMessage();
+//            OutputStream os = connection.getOutputStream();
+//            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+//            writer.write(createJSON(img));
+//            writer.flush();
+//            writer.close();
+//            os.close();
+//            connection.connect();
+//
+//            connection.getResponseCode();
+//            connection.getResponseMessage();
 
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (java.io.IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
