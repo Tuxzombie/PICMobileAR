@@ -53,6 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dk.picit.picmobilear.handPose.ShowPose;
+import dk.picit.picmobilear.service.CheckListService;
 import dk.picit.picmobilear.service.VisionService;
 
 public class MainActivity extends AppCompatActivity {
