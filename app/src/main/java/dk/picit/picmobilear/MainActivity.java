@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dk.picit.picmobilear.handPose.ShowPose;
+import dk.picit.picmobilear.service.VisionService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -212,6 +213,8 @@ public class MainActivity extends AppCompatActivity {
                                 PrintWriter outEncodedImage = new PrintWriter(encodedFile);
                                 outEncodedImage.write(encodedImage);
                                 outEncodedImage.close();
+                                VisionService v = new VisionService(encodedImage);
+
 
                             } catch (IOException e) {
                                 e.printStackTrace();
