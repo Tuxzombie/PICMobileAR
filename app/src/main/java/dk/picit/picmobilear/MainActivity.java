@@ -84,8 +84,6 @@ public class MainActivity extends AppCompatActivity {
         cameraFrameProvider = new CameraFrameProvider();
         cameraFrameProvider.setCameraPreview(null);
 
-
-
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         String camId = null;
         int cameraOrientation = 0;
