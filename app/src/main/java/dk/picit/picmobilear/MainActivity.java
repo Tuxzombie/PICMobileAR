@@ -1,8 +1,10 @@
 package dk.picit.picmobilear;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private SurfaceTexture mPreviewSurfaceTexture = null;
     private Surface jpegCaptureSurface = null;
     private String encodedImage;
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,14 @@ public class MainActivity extends AppCompatActivity {
         cameraFrameProvider = new CameraFrameProvider();
         cameraFrameProvider.setCameraPreview(null);
 
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(context, "Svar modtaget :" + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        registerReceiver(receiver, new IntentFilter("OCR"));
 
 
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
@@ -111,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        registerReceiver(receiver, new IntentFilter("OCR"));
 
         // Check if the Camera permission is already available
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -203,23 +215,24 @@ public class MainActivity extends AppCompatActivity {
                             byte[] bytes = new byte[buffer.remaining()];
                             buffer.get(bytes);
                             FileOutputStream outImage = null;
-                            try {
-                                File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
-                                File encodedFile = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera", "encodedPic"+ System.currentTimeMillis()+".txt");
-                                outImage = new FileOutputStream(file);
-                                outImage.write(bytes);
-                                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+//                            try {
+//                                File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera","pic"+ System.currentTimeMillis()+".jpg");
+//                                File encodedFile = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera", "encodedPic"+ System.currentTimeMillis()+".txt");
+//                                outImage = new FileOutputStream(file);
+//                                outImage.write(bytes);
+//                                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
                                 encodedImage = Base64.encodeToString(bytes, Base64.DEFAULT);
-                                PrintWriter outEncodedImage = new PrintWriter(encodedFile);
-                                outEncodedImage.write(encodedImage);
-                                outEncodedImage.close();
-                                VisionService v = new VisionService(encodedImage);
+//                                PrintWriter outEncodedImage = new PrintWriter(encodedFile);
+//                                outEncodedImage.write(encodedImage);
+//                                outEncodedImage.close();
+                                VisionService visionService = new VisionService(getApplicationContext());
+                                visionService.execute(encodedImage);
 
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                         }
                     }, null);
 

@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'Key0'
+            keyPassword 'superpassword'
+            storeFile file('C:/Users/picit_stk/Documents/PICMobileARKey.jks')
+            storePassword 'superpassword'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "dk.picit.picmobilear"
@@ -27,5 +35,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.android.support:design:27.1.1'
-    implementation (name: "agapi", ext:'aar')
+    implementation(name: "agapi", ext: 'aar')
 }
