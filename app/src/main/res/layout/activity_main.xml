@@ -27,16 +27,23 @@
             <fragment
                 android:id="@+id/leftfragment"
                 android:name="dk.picit.picmobilear.ButtonFragment"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_width="0dp"
+                android:layout_weight="0.2" />
+
+            <fragment
+                android:id="@+id/fragment"
+                android:name="dk.picit.picmobilear.midFragment"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.6" />
 
             <fragment
                 android:id="@+id/rightfragment"
                 android:name="dk.picit.picmobilear.RightFragment"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_width="0dp"
+                android:layout_weight="0.2" />
         </LinearLayout>
     </LinearLayout>
 

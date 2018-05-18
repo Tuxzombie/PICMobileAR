@@ -1,5 +1,7 @@
 package dk.picit.picmobilear.service;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
@@ -17,6 +19,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -24,11 +30,25 @@ public class CheckListService {
 
     private UserAndContainerNr userAndContainerNr = new UserAndContainerNr();
     private InputStream in;
+    private List<String> service = new ArrayList<>();
+    private Map<String, String> information = new HashMap<>();
+    private Context context;
+
+    public CheckListService(Context context){
+        this.context = context;
+    }
 
     public void sendRequest(){
         HtmlRequest htmlRequest = new HtmlRequest();
         htmlRequest.execute();
+    }
 
+    private void saveServiceString(String serviceString){
+        String[] strings = serviceString.split("\\|");
+        for(int i = 0; i< strings.length; i++){
+            String[] service = strings[i].split(":");
+            this.service.add(service[1]);
+        }
     }
 
     private void readStream(InputStream inputStream) throws IOException {
@@ -39,11 +59,27 @@ public class CheckListService {
             int event = parser.getEventType();
             while (event != XmlPullParser.END_DOCUMENT){
                 String name = parser.getName();
-                if (XmlPullParser.START_TAG == event || XmlPullParser.END_TAG == event)
-                    Log.d(TAG, "readStream: " + name);
-
-                if (XmlPullParser.TEXT == event){
-                    Log.d(TAG, "readStream: " + parser.getText());
+                if (XmlPullParser.START_TAG == event && name.equals("UpdateMessage")){
+                    event = parser.next();
+                    name = parser.getName();
+                    while (XmlPullParser.END_TAG != event || !name.equals("UpdateMessage")){
+                        Log.d(TAG, "readStream: " + name);
+                        if(XmlPullParser.START_TAG == event && name.equals("Services")){
+                            event = parser.next();
+                            if(XmlPullParser.END_TAG != event){
+                                saveServiceString(parser.getText());
+//                                Log.d(TAG, "readStream: " + parser.getText());
+                            }
+                        } else if(XmlPullParser.START_TAG == event){
+                            event = parser.next();
+                            if(XmlPullParser.END_TAG != event){
+                                information.put(name, parser.getText());
+//                            Log.d(TAG, "readStream: " + parser.getText());
+                            }
+                        }
+                        event = parser.next();
+                        name = parser.getName();
+                    }
                 }
 
                 event = parser.next();
@@ -53,13 +89,6 @@ public class CheckListService {
         } finally {
             in.close();
         }
-
-
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        String line = reader.readLine();
-//        while (line != null) {
-//            line = reader.readLine();
-//        }
     }
 
     public void setUsername(String username){
@@ -145,9 +174,20 @@ public class CheckListService {
             super.onPostExecute(aVoid);
             try {
                 readStream(in);
+                Intent in = new Intent("CheckListReady");
+                context.sendBroadcast(in);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Map<String, String> getInformation() {
+        return information;
+    }
+
+    public List<String> getService() {
+        return service;
     }
 }

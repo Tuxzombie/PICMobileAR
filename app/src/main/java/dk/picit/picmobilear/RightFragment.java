@@ -1,24 +1,29 @@
 package dk.picit.picmobilear;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.HashMap;
-
+import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterCheckList;
 import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterContainerInformation;
+import dk.picit.picmobilear.service.CheckListService;
+
+import static android.content.ContentValues.TAG;
 
 
 public class RightFragment extends Fragment {
 
-    private RecyclerView recyclerView;
+    private RecyclerView rvwInformation;
+    private RecyclerView rvwCheckList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,20 +35,41 @@ public class RightFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_right, container, false);
 
-        recyclerView = (RecyclerView)  view.findViewById(R.id.RvwContainerInformation);
+        rvwInformation = (RecyclerView)  view.findViewById(R.id.RvwContainerInformation);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        rvwInformation.setLayoutManager(layoutManager);
 
-        HashMap<String, String> map = new HashMap<>();
-        map.put("Navn", "Kasper");
-        map.put("Efternavn", "Knudsen");
-        map.put("Noget", "Andet");
 
-        RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(map);
-        recyclerView.setAdapter(recyclerAdapterContainerInformation);
 
-        // Inflate the layout for this fragment
+        rvwCheckList = (RecyclerView) view.findViewById(R.id.RvwChecklist);
+        layoutManager = new LinearLayoutManager(getContext());
+        rvwCheckList.setLayoutManager(layoutManager);
+
+        final CheckListService checkListService = new CheckListService(getContext());
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(checkListService.getInformation());
+                rvwInformation.setAdapter(recyclerAdapterContainerInformation);
+
+                Log.d(TAG, "onReceive: " + checkListService.getInformation().toString());
+
+                RecyclerAdapterCheckList recyclerAdapterCheckList = new RecyclerAdapterCheckList(checkListService.getService());
+                rvwCheckList.setAdapter(recyclerAdapterCheckList);
+            }
+        };
+
+        getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
+
+
+        checkListService.setUsername("");
+        checkListService.setPassword("");
+        checkListService.setContainerNr("IVAN1234567");
+        checkListService.sendRequest();
+
+
         return view;
     }
 }
