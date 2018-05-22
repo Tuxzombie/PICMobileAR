@@ -73,7 +73,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
                 JSONObject jo = stringToJSON(s);
                 ocrResult = jo.getJSONArray("responses").getJSONObject(0).getJSONArray("textAnnotations").getJSONObject(0).getString("description");
             } catch (JSONException e) {
-                ocrResult = "Ingen tekst fundet";
+                ocrResult = "No Text Found";
             }
         }
         Log.d(TAG, "--onPostexc s--"+s);

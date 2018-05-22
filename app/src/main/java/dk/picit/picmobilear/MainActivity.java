@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, "Svar modtaget :" + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Response Received :" + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
             }
         };
 
