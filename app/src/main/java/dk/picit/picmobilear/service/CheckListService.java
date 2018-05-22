@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -131,12 +132,16 @@ public class CheckListService {
                 Log.d(TAG, "sendRequest:" + strings[0]);
                 URL url = new URL(strings[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(5000);
                 try {
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                 } finally {
                     urlConnection.disconnect();
                 }
             } catch (java.io.IOException e) {
+                Toast toast = Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG);
+                toast.show();
             }
 
             return inputStream;

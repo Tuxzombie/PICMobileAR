@@ -67,8 +67,8 @@ public class RightFragment extends Fragment {
         getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
 
 
-        checkListService.setUsername("");
-        checkListService.setPassword("");
+        checkListService.setUsername("kGHikLiikljcnknd");
+        checkListService.setPassword("RbiubbLchRkbQaih");
         checkListService.setContainerNr("IVAN1234567");
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
