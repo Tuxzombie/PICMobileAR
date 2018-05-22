@@ -72,6 +72,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
         {
 
         }
+        Log.d(TAG, ocrResult);
         Intent in = new Intent("OCR");
         in.putExtra("ocrResult", ocrResult);
         mContext.sendBroadcast(in);
