@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'Key0'
+            keyPassword 'superpassword'
+            storeFile file('C:/Users/picit_stk/Documents/PICMobileARKey.jks')
+            storePassword 'superpassword'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "dk.picit.picmobilear"
