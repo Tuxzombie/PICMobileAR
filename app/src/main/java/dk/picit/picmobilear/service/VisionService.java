@@ -35,44 +35,49 @@ public class VisionService extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... img) {
-        try {
-            url = new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.addRequestProperty("Accept", "application/json");
-            connection.addRequestProperty("Content-Type", "application/json");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+        msg = "";
+        if(img != null) {
+            try {
+                url = new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.addRequestProperty("Accept", "application/json");
+                connection.addRequestProperty("Content-Type", "application/json");
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
-            OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(createJSONPOST(img[0]));
-            writer.flush();
-            writer.close();
-            os.close();
-            connection.connect();
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(createJSONPOST(img[0]));
+                writer.flush();
+                writer.close();
+                os.close();
+                connection.connect();
 
-            responseCode = connection.getResponseCode();
-            msg = streamToString(connection.getInputStream());
+                responseCode = connection.getResponseCode();
+                msg = streamToString(connection.getInputStream());
+                Log.d(TAG, "--doInBack--"+msg);
 
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
+            } catch (java.io.IOException e) {
+
+            }
         }
         return msg;
     }
 
     @Override
     protected void onPostExecute(String s) {
-        String ocrResult = "";
-        try {
-            JSONObject jo = stringToJSON(s);
-            ocrResult = jo.getJSONArray("responses").getJSONObject(0).getJSONArray("textAnnotations").getJSONObject(0).getString("description");
+        String ocrResult = "No Internet Connection";
+        if(s != null) {
+            try {
+                JSONObject jo = stringToJSON(s);
+                ocrResult = jo.getJSONArray("responses").getJSONObject(0).getJSONArray("textAnnotations").getJSONObject(0).getString("description");
+            } catch (JSONException e) {
+                ocrResult = "Ingen tekst fundet";
+            }
         }
-        catch (JSONException e)
-        {
-
-        }
-        Log.d(TAG, ocrResult);
+        Log.d(TAG, "--onPostexc s--"+s);
+        Log.d(TAG, "--onPostexc ocrResult--"+ocrResult);
         Intent in = new Intent("OCR");
         in.putExtra("ocrResult", ocrResult);
         mContext.sendBroadcast(in);
