@@ -61,7 +61,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
                 Log.d(TAG, "--doInBack--"+msg);
 
             } catch (java.io.IOException e) {
-
+                return null;
             }
         }
         return msg;
