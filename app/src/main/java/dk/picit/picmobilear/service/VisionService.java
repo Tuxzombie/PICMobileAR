@@ -45,8 +45,8 @@ public class VisionService extends AsyncTask<String, Void, String> {
                 connection.addRequestProperty("Content-Type", "application/json");
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
-                connection.setConnectTimeout(1000);
-                connection.setReadTimeout(1000);
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
 
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
