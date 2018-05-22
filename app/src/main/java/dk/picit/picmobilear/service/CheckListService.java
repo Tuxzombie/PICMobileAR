@@ -2,6 +2,7 @@ package dk.picit.picmobilear.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
@@ -29,7 +30,6 @@ import static android.content.ContentValues.TAG;
 public class CheckListService {
 
     private UserAndContainerNr userAndContainerNr = new UserAndContainerNr();
-    private InputStream in;
     private List<String> service = new ArrayList<>();
     private Map<String, String> information = new HashMap<>();
     private Context context;
@@ -39,8 +39,9 @@ public class CheckListService {
     }
 
     public void sendRequest(){
+
         HtmlRequest htmlRequest = new HtmlRequest();
-        htmlRequest.execute();
+        htmlRequest.execute(userAndContainerNr.getHtmlString());
     }
 
     private void saveServiceString(String serviceString){
@@ -55,7 +56,7 @@ public class CheckListService {
 
         XmlPullParser parser = Xml.newPullParser();
         try {
-            parser.setInput(in, null);
+            parser.setInput(inputStream, null);
             int event = parser.getEventType();
             while (event != XmlPullParser.END_DOCUMENT){
                 String name = parser.getName();
@@ -87,7 +88,7 @@ public class CheckListService {
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         } finally {
-            in.close();
+            inputStream.close();
         }
     }
 
@@ -103,6 +104,13 @@ public class CheckListService {
         userAndContainerNr.containerNr = containerNr;
     }
 
+    public Map<String, String> getInformation() {
+        return information;
+    }
+
+    public List<String> getService() {
+        return service;
+    }
 
     private class UserAndContainerNr{
         String username;
@@ -114,66 +122,31 @@ public class CheckListService {
         }
     }
 
-    private class HtmlRequest extends AsyncTask<Void, Void, Void>  {
+    private class HtmlRequest extends AsyncTask<String, Void, InputStream>  {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected InputStream doInBackground(String... strings) {
+            InputStream inputStream = null;
             try {
-            Log.d(TAG, "sendRequest:" + userAndContainerNr.getHtmlString());
-                URL url = new URL(userAndContainerNr.getHtmlString());
+                Log.d(TAG, "sendRequest:" + strings[0]);
+                URL url = new URL(strings[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
-                    in = new BufferedInputStream(urlConnection.getInputStream());
+                    inputStream = new BufferedInputStream(urlConnection.getInputStream());
                 } finally {
                     urlConnection.disconnect();
                 }
             } catch (java.io.IOException e) {
-                e.printStackTrace();
             }
-//            HttpURLConnection urlConnection = null;
-//            try {
-//                URL url = new URL("http://mobile.picit.dk/html/GetPost?");
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                urlConnection.setRequestMethod("POST");
-//                urlConnection.setRequestProperty("psi","42.udv.webquery.test");
-//                urlConnection.setRequestProperty("NetUserId", "");
-//                urlConnection.setRequestProperty("SignOnCode", "");
-//                urlConnection.setRequestProperty("OpCode", "devtest");
-//                urlConnection.setRequestProperty("eqpid", "IVAN1234567");
-//                urlConnection.setRequestProperty("terminal", "Q");
-//                urlConnection.setDoOutput(true);
-//
-//                OutputStream outputStream = new BufferedOutputStream(urlConnection.getOutputStream());
-//
-//                outputStream.flush();
-//                outputStream.close();
-//
-//                int responseCode = urlConnection.getResponseCode();
-//
-//                if(responseCode == HttpURLConnection.HTTP_OK){
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//                    String line = reader.readLine();
-//                    while (line != null){
-//                        Log.d(TAG, "doInBackground: " + line);
-//                        line = reader.readLine();
-//                    }
-//                    reader.close();
-//                }
-//
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
 
-            return null;
+            return inputStream;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(InputStream inputStream) {
+            super.onPostExecute(inputStream);
             try {
-                readStream(in);
+                readStream(inputStream);
                 Intent in = new Intent("CheckListReady");
                 context.sendBroadcast(in);
 
@@ -181,13 +154,5 @@ public class CheckListService {
                 e.printStackTrace();
             }
         }
-    }
-
-    public Map<String, String> getInformation() {
-        return information;
-    }
-
-    public List<String> getService() {
-        return service;
     }
 }

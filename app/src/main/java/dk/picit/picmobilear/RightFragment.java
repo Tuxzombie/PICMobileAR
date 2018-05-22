@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterCheckList;
 import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterContainerInformation;
@@ -64,11 +67,17 @@ public class RightFragment extends Fragment {
         getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
 
 
-        checkListService.setUsername("");
-        checkListService.setPassword("");
+        checkListService.setUsername("kGHikLiikljcnknd");
+        checkListService.setPassword("RbiubbLchRkbQaih");
         checkListService.setContainerNr("IVAN1234567");
-        checkListService.sendRequest();
-
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if(activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()){
+            Toast toast = Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_LONG);
+            toast.show();
+        } else{
+            checkListService.sendRequest();
+        }
 
         return view;
     }
