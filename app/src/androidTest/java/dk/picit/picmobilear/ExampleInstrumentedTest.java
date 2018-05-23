@@ -48,11 +48,11 @@ public class ExampleInstrumentedTest {
 
 //    IMG_20180523_115513.jpg
         String testString5 = "KK FU 1 3 2 4 15\n";
-        String testString5Result = "KKFU132415";
+        String testString5Result = "KKFU1324152";
 
 //    udfordring
         String testString6 = "tex\ntex\nBSIU 1225378 B\n2261\nue Skv\nintermodal\nMAX. GROSS 30480 KGS \n67.200 LBS\n2185 KGS \n4820 LBS\n28.295 KGS\n62380 LBS \nNET\n3 1173 CU.FT\n";
-        String testString6Result = "BSIU1225378";
+        String testString6Result = "BSIU2253788";
     }
     @Test
     public void vision_isCorrect()
