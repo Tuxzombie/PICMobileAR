@@ -2,6 +2,8 @@ package dk.picit.picmobilear;
 
 import org.junit.Test;
 
+import dk.picit.picmobilear.service.VisionService;
+
 import static org.junit.Assert.*;
 
 /**
@@ -14,4 +16,6 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+
 }
