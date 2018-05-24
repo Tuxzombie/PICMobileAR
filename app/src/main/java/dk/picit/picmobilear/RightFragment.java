@@ -58,23 +58,7 @@ public class RightFragment extends Fragment {
 
         rvwEqId = (RecyclerView) view.findViewById(R.id.RvwEqIdList);
         rvwEqId.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvwEqId.setAdapter(new RecyclerView.Adapter() {
-            @NonNull
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return null;
-            }
 
-            @Override
-            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
-            }
-
-            @Override
-            public int getItemCount() {
-                return 0;
-            }
-        });
 
         final CheckListService checkListService = new CheckListService(getContext());
 
