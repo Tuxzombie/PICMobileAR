@@ -53,6 +53,11 @@ public class CheckListService {
         }
     }
 
+    /**
+     * Find and save the information about hte container, and the check list.
+     * @param inputStream
+     * @throws IOException
+     */
     private void readStream(InputStream inputStream) throws IOException {
 
         XmlPullParser parser = Xml.newPullParser();
@@ -143,7 +148,6 @@ public class CheckListService {
                 Toast toast = Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG);
                 toast.show();
             }
-
             return inputStream;
         }
 

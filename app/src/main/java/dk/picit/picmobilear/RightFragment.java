@@ -27,6 +27,7 @@ public class RightFragment extends Fragment {
 
     private RecyclerView rvwInformation;
     private RecyclerView rvwCheckList;
+    private BroadcastReceiver checkListReceiver, visionReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class RightFragment extends Fragment {
 
         final CheckListService checkListService = new CheckListService(getContext());
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        checkListReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(checkListService.getInformation());
@@ -68,9 +69,9 @@ public class RightFragment extends Fragment {
             }
         };
 
-        getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
 
-        receiver = new BroadcastReceiver() {
+
+        visionReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (!intent.getStringExtra("ocrResult").equals("No Text Found")) {
@@ -91,10 +92,24 @@ public class RightFragment extends Fragment {
             }
         };
 
-        getContext().registerReceiver(receiver, new IntentFilter("OCR"));
+
 
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getContext().registerReceiver(checkListReceiver , new IntentFilter("CheckListReady"));
+        getContext().registerReceiver(visionReceiver, new IntentFilter("OCR"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(checkListReceiver);
+        getContext().unregisterReceiver(visionReceiver);
     }
 }
 

@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         stopAugumentaManager();
-
+        unregisterReceiver(receiver);
     }
 
 

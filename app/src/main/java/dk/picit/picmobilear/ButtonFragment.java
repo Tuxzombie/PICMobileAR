@@ -73,4 +73,10 @@ public class ButtonFragment extends Fragment {
         super.onResume();
         getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(receiver);
+    }
 }
