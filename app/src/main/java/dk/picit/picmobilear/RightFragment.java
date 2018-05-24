@@ -38,11 +38,15 @@ public class RightFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_right, container, false);
 
-        rvwInformation = (RecyclerView)  view.findViewById(R.id.RvwContainerInformation);
+        rvwInformation = (RecyclerView) view.findViewById(R.id.RvwContainerInformation);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext()){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
         rvwInformation.setLayoutManager(layoutManager);
-
 
 
         rvwCheckList = (RecyclerView) view.findViewById(R.id.RvwChecklist);
@@ -66,18 +70,29 @@ public class RightFragment extends Fragment {
 
         getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
 
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!intent.getStringExtra("ocrResult").equals("No Text Found")) {
+                    checkListService.setUsername("kGHikLiikljcnknd");
+                    checkListService.setPassword("RbiubbLchRkbQaih");
+                    checkListService.setContainerNr(intent.getStringExtra("ocrResult"));
 
-        checkListService.setUsername("kGHikLiikljcnknd");
-        checkListService.setPassword("RbiubbLchRkbQaih");
-        checkListService.setContainerNr("IVAN1234567");
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if(activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()){
-            Toast toast = Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_LONG);
-            toast.show();
-        } else{
-            checkListService.sendRequest();
-        }
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                    if (activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()) {
+                        Toast toast = Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        checkListService.sendRequest();
+                    }
+                }
+                Toast.makeText(context, "Response Received :" + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        getContext().registerReceiver(receiver, new IntentFilter("OCR"));
+
 
         return view;
     }

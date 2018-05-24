@@ -89,14 +89,7 @@ public class MainActivity extends AppCompatActivity {
         cameraFrameProvider = new CameraFrameProvider();
         cameraFrameProvider.setCameraPreview(null);
 
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, "Response Received :" + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
-            }
-        };
 
-        registerReceiver(receiver, new IntentFilter("OCR"));
 
 
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);

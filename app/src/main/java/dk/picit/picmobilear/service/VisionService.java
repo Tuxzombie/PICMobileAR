@@ -74,6 +74,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
             try {
                 JSONObject jo = stringToJSON(s);
                 ocrResult = jo.getJSONArray("responses").getJSONObject(0).getJSONArray("textAnnotations").getJSONObject(0).getString("description");
+                ocrResult = ParserService.visionToISO6346(ocrResult);
             } catch (JSONException e) {
                 ocrResult = "No Text Found";
             }
