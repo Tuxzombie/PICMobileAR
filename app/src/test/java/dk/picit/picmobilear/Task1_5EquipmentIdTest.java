@@ -10,14 +10,14 @@ import static org.junit.Assert.*;
 
 public class Task1_5EquipmentIdTest {
 
-    private String testString1, testString2, testString3, testString4,
+    private static String testString1, testString2, testString3, testString4,
             testString5, testString6, testString1Result, testString2Result,
             testString3Result, testString4Result, testString5Result, testString6Result;
 
-    private ParserService ps;
+    private static ParserService ps;
 
     @BeforeClass
-    public void setUp() throws Exception
+    public static void setUp() throws Exception
     {
 //    IMG_20180523_115904.jpg
         testString1 = "DACU 011268 1\n12 GB\n6\n";
