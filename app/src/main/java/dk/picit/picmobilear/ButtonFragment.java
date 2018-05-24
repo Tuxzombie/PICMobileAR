@@ -1,12 +1,21 @@
 package dk.picit.picmobilear;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+
+import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterCheckList;
+import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterContainerInformation;
+
+import static android.content.ContentValues.TAG;
 
 public class ButtonFragment extends Fragment {
     private static final String TAG = ButtonFragment.class.getSimpleName();
@@ -14,7 +23,8 @@ public class ButtonFragment extends Fragment {
 
     private View view;
     private int count = 0;
-    private Button button;
+    private Button buttonTakePicture, buttonReselectEqId;
+    private BroadcastReceiver receiver;
     MainActivity activity;
 
     @Override
@@ -26,36 +36,41 @@ public class ButtonFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_button, container, false);
-        button = (Button) view.findViewById(R.id.button);
-        button.setOnClickListener(buttonClickListener);
+        buttonTakePicture = (Button) view.findViewById(R.id.buttonTakePicture);
+        buttonTakePicture.setOnClickListener(takePictureClickListener);
 
-        button.setOnClickListener(takePictureClickListener);
+        buttonReselectEqId = (Button) view.findViewById(R.id.buttonReselectEqId);
+        buttonReselectEqId.setOnClickListener(reselectEqId);
+
         activity = (MainActivity) getActivity();
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                buttonReselectEqId.setVisibility(View.VISIBLE);
+            }
+        };
         return view;
     }
-
-
-
-    private void pushButton(){
-        count++;
-        TextView pushCount = view.findViewById(R.id.textViewCount);
-        pushCount.setText("Push count: " + count);
-    }
-
-    private View.OnClickListener buttonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            pushButton();
-        }
-    };
 
     private View.OnClickListener takePictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             activity.takePicture();
+            buttonReselectEqId.setVisibility(View.GONE);
         }
     };
 
+    private View.OnClickListener reselectEqId = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
+    }
 }

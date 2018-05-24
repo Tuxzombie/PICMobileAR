@@ -9,35 +9,19 @@
     tools:context=".ButtonFragment">
 
 
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:text="left" />
-
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="Button" />
-
-
         <Button
             android:id="@+id/buttonTakePicture"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:text="Button" />
+            android:text="OCR" />
 
-        <TextView
-            android:id="@+id/textViewCount"
+
+        <Button
+            android:id="@+id/buttonReselectEqId"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Push count: 0" />
-
+            android:layout_height="100dp"
+            android:text="Reselect Container ID"
+            android:visibility="gone" />
 
 
 </LinearLayout>
