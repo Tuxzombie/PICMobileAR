@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,10 @@ public class ButtonFragment extends Fragment {
     private View.OnClickListener reselectEqId = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
+            fragmentView.findViewById(R.id.RvwContainerInformation).setVisibility(View.GONE);
+            fragmentView.findViewById(R.id.RvwChecklist).setVisibility(View.GONE);
+            fragmentView.findViewById(R.id.RvwEqIdList).setVisibility(View.VISIBLE);
         }
     };
 

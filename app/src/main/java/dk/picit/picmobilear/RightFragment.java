@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ public class RightFragment extends Fragment {
 
     private RecyclerView rvwInformation;
     private RecyclerView rvwCheckList;
+    private RecyclerView rvwEqId;
     private BroadcastReceiver checkListReceiver, visionReceiver;
 
     @Override
@@ -53,6 +55,26 @@ public class RightFragment extends Fragment {
         rvwCheckList = (RecyclerView) view.findViewById(R.id.RvwChecklist);
         layoutManager = new LinearLayoutManager(getContext());
         rvwCheckList.setLayoutManager(layoutManager);
+
+        rvwEqId = (RecyclerView) view.findViewById(R.id.RvwEqIdList);
+        rvwEqId.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvwEqId.setAdapter(new RecyclerView.Adapter() {
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return null;
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public int getItemCount() {
+                return 0;
+            }
+        });
 
         final CheckListService checkListService = new CheckListService(getContext());
 
