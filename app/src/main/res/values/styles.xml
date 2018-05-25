@@ -11,4 +11,9 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="textView" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:state_multiline">true</item>
+    </style>
+
 </resources>
