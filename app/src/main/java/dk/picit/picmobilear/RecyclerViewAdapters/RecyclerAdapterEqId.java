@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import dk.picit.picmobilear.R;
 
@@ -24,13 +25,13 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
 
     private Context context;
     private Listener listener;
-    private ArrayList<String> data;
+    private List<String> data;
 
     interface Listener {
         void onClick(int position);
     }
 
-    public RecyclerAdapterEqId(Context context, ArrayList<String> data) {
+    public RecyclerAdapterEqId(Context context, List<String> data) {
         this.context = context;
         this.data = data;
     }
@@ -62,7 +63,7 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
             }
         });
 
-        TextView eqId = (TextView) holder.cardView.findViewById(R.id.adapter_eqid_cardview);
+        TextView eqId = (TextView) holder.cardView.findViewById(R.id.textView_eqid_id);
         eqId.setText(data.get(holder.getAdapterPosition()));
 
     }

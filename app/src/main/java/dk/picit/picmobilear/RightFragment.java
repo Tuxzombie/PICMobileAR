@@ -17,11 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterCheckList;
 import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterContainerInformation;
+import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterEqId;
 import dk.picit.picmobilear.service.CheckListService;
 
 import static android.content.ContentValues.TAG;
+import static java.nio.file.Paths.get;
 
 
 public class RightFragment extends Fragment {
@@ -43,7 +51,7 @@ public class RightFragment extends Fragment {
 
         rvwInformation = (RecyclerView) view.findViewById(R.id.RvwContainerInformation);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext()){
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext()) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -65,16 +73,24 @@ public class RightFragment extends Fragment {
         checkListReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(checkListService.getInformation());
+                Map<String, String> informationMap = checkListService.getInformation();
+                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(informationMap);
                 rvwInformation.setAdapter(recyclerAdapterContainerInformation);
 
                 Log.d(TAG, "onReceive: " + checkListService.getInformation().toString());
 
                 RecyclerAdapterCheckList recyclerAdapterCheckList = new RecyclerAdapterCheckList(checkListService.getService());
                 rvwCheckList.setAdapter(recyclerAdapterCheckList);
+
+                String eqpList = informationMap.get("EqpList");
+                if (eqpList != null) {
+                    eqpList = eqpList.replaceAll("cont:", "");
+                    String[] eqpArray = eqpList.split("\\|");;
+                    RecyclerAdapterEqId recyclerAdapterEqId = new RecyclerAdapterEqId(getContext(), Arrays.asList(eqpArray));
+                    rvwEqId.setAdapter(recyclerAdapterEqId);
+                }
             }
         };
-
 
 
         visionReceiver = new BroadcastReceiver() {
@@ -99,15 +115,13 @@ public class RightFragment extends Fragment {
         };
 
 
-
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getContext().registerReceiver(checkListReceiver , new IntentFilter("CheckListReady"));
+        getContext().registerReceiver(checkListReceiver, new IntentFilter("CheckListReady"));
         getContext().registerReceiver(visionReceiver, new IntentFilter("OCR"));
     }
 
