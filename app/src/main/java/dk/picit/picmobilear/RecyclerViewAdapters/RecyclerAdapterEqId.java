@@ -1,6 +1,7 @@
 package dk.picit.picmobilear.RecyclerViewAdapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -24,12 +25,8 @@ import dk.picit.picmobilear.R;
 public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqId.ViewHolder>{
 
     private Context context;
-    private Listener listener;
     private List<String> data;
 
-    interface Listener {
-        void onClick(int position);
-    }
 
     public RecyclerAdapterEqId(Context context, List<String> data) {
         this.context = context;
@@ -57,9 +54,11 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) {
-                    listener.onClick(holder.getAdapterPosition());
-                }
+                String ocrResult = data.get(holder.getAdapterPosition());
+                ocrResult = ocrResult.replaceAll(" ", "").replaceAll("\\?", "").replaceAll("-", "");
+                Intent in = new Intent("OCR");
+                in.putExtra("ocrResult", ocrResult);
+                context.sendBroadcast(in);
             }
         });
 
@@ -71,9 +70,5 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
     }
 }

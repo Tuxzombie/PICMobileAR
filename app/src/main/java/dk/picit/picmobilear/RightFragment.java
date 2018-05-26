@@ -89,6 +89,11 @@ public class RightFragment extends Fragment {
                     RecyclerAdapterEqId recyclerAdapterEqId = new RecyclerAdapterEqId(getContext(), Arrays.asList(eqpArray));
                     rvwEqId.setAdapter(recyclerAdapterEqId);
                 }
+
+                View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
+                fragmentView.findViewById(R.id.RvwContainerInformation).setVisibility(View.VISIBLE);
+                fragmentView.findViewById(R.id.RvwChecklist).setVisibility(View.VISIBLE);
+                fragmentView.findViewById(R.id.RvwEqIdList).setVisibility(View.GONE);
             }
         };
 
@@ -110,7 +115,7 @@ public class RightFragment extends Fragment {
                         checkListService.sendRequest();
                     }
                 }
-                Toast.makeText(context, "Response Received :" + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Response Received : " + intent.getStringExtra("ocrResult"), Toast.LENGTH_LONG).show();
             }
         };
 
