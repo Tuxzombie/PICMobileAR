@@ -74,7 +74,7 @@ public class RightFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Map<String, String> informationMap = checkListService.getInformation();
-                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(informationMap);
+                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(context,informationMap);
                 rvwInformation.setAdapter(recyclerAdapterContainerInformation);
 
                 Log.d(TAG, "onReceive: " + checkListService.getInformation().toString());

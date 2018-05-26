@@ -1,5 +1,6 @@
 package dk.picit.picmobilear.RecyclerViewAdapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -22,6 +24,8 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
 
     private Map<String, String> dataset;
     private Iterator<String> keySetIterable;
+    private Context context;
+    private boolean isCollapsed;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -33,9 +37,11 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
         }
     }
 
-    public RecyclerAdapterContainerInformation(Map<String, String> dataset) {
+    public RecyclerAdapterContainerInformation(Context context, Map<String, String> dataset) {
         super();
         this.dataset = dataset;
+        this.context = context;
+        isCollapsed = true;
         Set<String> keySet = this.dataset.keySet();
         this.keySetIterable = keySet.iterator();
     }
@@ -50,19 +56,50 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         TextView tvwKey = holder.constraintLayout.findViewById(R.id.tvwKey);
         TextView tvwValue = holder.constraintLayout.findViewById(R.id.tvwValue);
-        String key = keySetIterable.next();
-        String value = dataset.get(key);
-        Log.d(TAG, "onBindViewHolder: " + key);
-        tvwKey.setText(key + ":");
-        tvwValue.setText(value);
+        if(keySetIterable.hasNext()) {
+            String key = keySetIterable.next();
+            String value = dataset.get(key);
+            Log.d(TAG, "onBindViewHolder: " + key);
+            if (key.equals("EquipmentID")) {
+                tvwKey.setText(key + ":");
+                tvwValue.setText(value);
+                holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        setCollapsed(!isCollapsed);
+
+                        Toast.makeText(context, "" + holder.constraintLayout.getChildCount(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else if (!isCollapsed) {
+                tvwKey.setText(key + ":");
+                tvwValue.setText(value);
+                tvwKey.setVisibility(View.VISIBLE);
+                tvwValue.setVisibility(View.VISIBLE);
+            } else {
+                    tvwKey.setText(key + ":");
+                    tvwValue.setText(value);
+                    tvwKey.setVisibility(View.GONE);
+                    tvwValue.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
         return dataset.size();
+    }
+
+    public void setCollapsed(boolean b)
+    {
+        this.isCollapsed = b;
+        Set<String> keySet = this.dataset.keySet();
+        this.keySetIterable = keySet.iterator();
+        notifyDataSetChanged();
     }
 
 }
