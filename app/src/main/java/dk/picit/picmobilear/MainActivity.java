@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             ImageReader jpegImageReader = ImageReader.newInstance(jpegSizes[maxPlacement].getWidth(), jpegSizes[maxPlacement].getHeight(), ImageFormat.JPEG, 1);
+            //when the camera takes an image, and sends it to this surface, this listenser begins the vision service process
             jpegImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -210,8 +211,10 @@ public class MainActivity extends AppCompatActivity {
                     buffer.get(bytes);
                     FileOutputStream outImage = null;
 
+                    //converts the jpeg image into a base64 string for google vision
                     encodedImage = Base64.encodeToString(bytes, Base64.DEFAULT);
 
+                    //checks if there is an internet connection available before creating the vision service
                     ConnectivityManager connectivityManager = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
                     if(activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()){
@@ -241,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     mCamera = camera;
                     List<Surface> surfaces = Arrays.asList(previewSurface, jpegCaptureSurface);
                     try {
-                        //Creates session witch keeps requesting a picture for the preview service
+                        //Creates session that runs camera to a no visbile surface for 30 frames, to auto ajust white balance, color and focus, then takes a picture
                         mCamera.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
                             @Override
                             public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -268,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
 //                                            request.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 //                                            request.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
                                     request.addTarget(jpegCaptureSurface);
+                                    //if the capture is succesfull, then close camera to realese it, and start augumenta
                                     mSession.capture(request.build(), new CameraCaptureSession.CaptureCallback() {
                                         @Override
                                         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
@@ -277,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }, null);
                                 } catch (CameraAccessException e) {
+                                    //if something goes wrong with the capture, then cloese camera to realese it, and start augumenta
                                     e.printStackTrace();
                                     mCamera.close();
                                     startAugumentaManager();
@@ -289,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }, null);
                     } catch (CameraAccessException e) {
+                        //if accesing the camera fails , then cloese camera to realese it, and start augumenta
                         e.printStackTrace();
                         mCamera.close();
                         startAugumentaManager();

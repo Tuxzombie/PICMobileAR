@@ -26,7 +26,8 @@ public class ButtonFragment extends Fragment {
     private int count = 0;
     private Button buttonTakePicture, buttonReselectEqId;
     private BroadcastReceiver receiver;
-    MainActivity activity;
+    private MainActivity activity;
+    private RecyclerView rvwContainerInformaion, rvwCheckList, rvwEqIdList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,18 +58,23 @@ public class ButtonFragment extends Fragment {
     private View.OnClickListener takePictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            activity.takePicture();
-            buttonReselectEqId.setVisibility(View.GONE);
+            //uncommented for testing
+//            activity.takePicture();
+
+            String ocrResult = "IVAN1234567";
+            Intent in = new Intent("OCR");
+            in.putExtra("ocrResult", ocrResult);
+            activity.sendBroadcast(in);
+            toggleVisiblityForLists(true);
+
+
         }
     };
 
     private View.OnClickListener reselectEqId = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
-            fragmentView.findViewById(R.id.RvwContainerInformation).setVisibility(View.GONE);
-            fragmentView.findViewById(R.id.RvwChecklist).setVisibility(View.GONE);
-            fragmentView.findViewById(R.id.RvwEqIdList).setVisibility(View.VISIBLE);
+            toggleVisiblityForLists(false);
         }
     };
 
@@ -76,11 +82,33 @@ public class ButtonFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
+
+        View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
+        rvwContainerInformaion = fragmentView.findViewById(R.id.RvwContainerInformation);
+        rvwCheckList = fragmentView.findViewById(R.id.RvwChecklist);
+        rvwEqIdList = fragmentView.findViewById(R.id.RvwEqIdList);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         getContext().unregisterReceiver(receiver);
+    }
+
+    private void toggleVisiblityForLists(boolean b)
+    {
+        if(b) {
+            buttonReselectEqId.setVisibility(View.GONE);
+            rvwContainerInformaion.setVisibility(View.VISIBLE);
+            rvwCheckList.setVisibility(View.VISIBLE);
+            rvwEqIdList.setVisibility(View.GONE);
+        }
+        else
+        {
+            buttonReselectEqId.setVisibility(View.VISIBLE);
+            rvwContainerInformaion.setVisibility(View.GONE);
+            rvwCheckList.setVisibility(View.GONE);
+            rvwEqIdList.setVisibility(View.VISIBLE);
+        }
     }
 }
