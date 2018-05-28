@@ -58,13 +58,9 @@ public class ButtonFragment extends Fragment {
     private View.OnClickListener takePictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //uncommented for testing
-//            activity.takePicture();
+            activity.takePicture();
+            activity.takeScreenshot(view);
 
-            String ocrResult = "IVAN1234567";
-            Intent in = new Intent("OCR");
-            in.putExtra("ocrResult", ocrResult);
-            activity.sendBroadcast(in);
             toggleVisiblityForLists(true);
 
 

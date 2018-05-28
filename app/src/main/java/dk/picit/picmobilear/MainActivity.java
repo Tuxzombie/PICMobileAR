@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
@@ -49,11 +50,13 @@ import com.augumenta.agapi.HandTransitionListener;
 import com.augumenta.agapi.Poses;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import dk.picit.picmobilear.handPose.ShowPose;
@@ -208,6 +211,19 @@ public class MainActivity extends AppCompatActivity {
                     buffer.get(bytes);
                     FileOutputStream outImage = null;
 
+                    try {
+                        Date now = new Date();
+                        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss",now);
+                        File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera", "pic" + now + ".jpg");
+                        outImage = new FileOutputStream(file);
+                        outImage.write(bytes);
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     //converts the jpeg image into a base64 string for google vision
                     encodedImage = Base64.encodeToString(bytes, Base64.DEFAULT);
 
@@ -311,5 +327,29 @@ public class MainActivity extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void takeScreenshot(View view){
+        View rootView = view.getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss",now);
+
+        String path = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/" + now + ".jpeg";
+        File imageFile = new File(path);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
