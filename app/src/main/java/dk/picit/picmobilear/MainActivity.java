@@ -233,9 +233,7 @@ public class MainActivity extends AppCompatActivity {
                     if(activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()){
                         Toast toast = Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_LONG);
                         toast.show();
-                    } else if(!sendToVision){
-                        Toast.makeText(MainActivity.this, sendToVision + "", Toast.LENGTH_LONG).show();
-                    }else {
+                    } else if(sendToVision){
                         VisionService visionService = new VisionService(getApplicationContext());
                         visionService.execute(encodedImage);
                     }
