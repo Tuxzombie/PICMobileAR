@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,11 +80,16 @@ public class VisionService extends AsyncTask<String, Void, String> {
                 ocrResult = "No Text Found";
             }
         }
+        if (ocrResult.isEmpty()){
+            Toast.makeText(mContext, "Response Received : " + "No Text Found", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mContext, "Response Received : " + ocrResult, Toast.LENGTH_LONG).show();
+            Intent in = new Intent("OCR");
+            in.putExtra("ocrResult", ocrResult);
+            mContext.sendBroadcast(in);
+        }
         Log.d(TAG, "--onPostexc s--"+s);
         Log.d(TAG, "--onPostexc ocrResult--"+ocrResult);
-        Intent in = new Intent("OCR");
-        in.putExtra("ocrResult", ocrResult);
-        mContext.sendBroadcast(in);
     }
 
     public String createJSONPOST(String img)

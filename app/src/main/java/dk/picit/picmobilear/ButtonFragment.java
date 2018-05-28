@@ -61,7 +61,7 @@ public class ButtonFragment extends Fragment {
             activity.takeScreenshot(view);
             activity.takePicture(true);
 
-            toggleVisiblityForLists(true);
+//            toggleVisiblityForLists(true);
 
 
         }
