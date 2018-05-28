@@ -1,5 +1,6 @@
 package dk.picit.picmobilear.RecyclerViewAdapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import dk.picit.picmobilear.MainActivity;
 import dk.picit.picmobilear.R;
 
 public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqId.ViewHolder>{
@@ -54,6 +56,9 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Activity a = (Activity) context;
+                ((MainActivity)a).takeScreenshot(view);
+
                 String ocrResult = data.get(holder.getAdapterPosition());
                 ocrResult = ocrResult.replaceAll(" ", "").replaceAll("\\?", "").replaceAll("-", "");
                 Intent in = new Intent("OCR");

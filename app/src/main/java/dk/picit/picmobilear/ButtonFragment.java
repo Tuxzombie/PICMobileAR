@@ -58,8 +58,8 @@ public class ButtonFragment extends Fragment {
     private View.OnClickListener takePictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            activity.takePicture();
             activity.takeScreenshot(view);
+            activity.takePicture(true);
 
             toggleVisiblityForLists(true);
 
@@ -70,6 +70,8 @@ public class ButtonFragment extends Fragment {
     private View.OnClickListener reselectEqId = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            activity.takeScreenshot(view);
+
             toggleVisiblityForLists(false);
         }
     };

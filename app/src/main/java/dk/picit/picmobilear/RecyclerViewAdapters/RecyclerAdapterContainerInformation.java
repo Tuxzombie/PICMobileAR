@@ -1,5 +1,6 @@
 package dk.picit.picmobilear.RecyclerViewAdapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import dk.picit.picmobilear.MainActivity;
 import dk.picit.picmobilear.R;
 
 import static android.content.ContentValues.TAG;
@@ -80,7 +82,8 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
                 holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        Activity a = (Activity) context;
+                        ((MainActivity)a).takeScreenshot(view);
                         setCollapsed(!isCollapsed);
 
                     }

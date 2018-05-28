@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         augumentaManager.stop();
     }
 
-    public void takePicture() {
+    public void takePicture(final boolean sendToVision) {
 
         stopAugumentaManager();
 
@@ -233,7 +233,9 @@ public class MainActivity extends AppCompatActivity {
                     if(activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()){
                         Toast toast = Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_LONG);
                         toast.show();
-                    } else {
+                    } else if(!sendToVision){
+                        Toast.makeText(MainActivity.this, sendToVision + "", Toast.LENGTH_LONG).show();
+                    }else {
                         VisionService visionService = new VisionService(getApplicationContext());
                         visionService.execute(encodedImage);
                     }
@@ -350,6 +352,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        takePicture(false);
     }
 }
