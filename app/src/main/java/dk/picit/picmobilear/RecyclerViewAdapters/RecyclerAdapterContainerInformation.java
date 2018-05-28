@@ -63,29 +63,28 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
             String key = keySetIterable.next();
             String value = dataset.get(key);
             Log.d(TAG, "onBindViewHolder: " + key);
-            if (key.equals("EquipmentID")) {
+            if (key.equalsIgnoreCase("EquipmentID")) {
                 tvwKey.setText(key + ":");
                 tvwValue.setText(value);
-                holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        setCollapsed(!isCollapsed);
-
-                        Toast.makeText(context, "" + holder.constraintLayout.getChildCount(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                tvwKey.setVisibility(View.VISIBLE);
+                tvwValue.setVisibility(View.VISIBLE);
             } else if (!isCollapsed) {
                 tvwKey.setText(key + ":");
                 tvwValue.setText(value);
                 tvwKey.setVisibility(View.VISIBLE);
                 tvwValue.setVisibility(View.VISIBLE);
             } else {
-                    tvwKey.setText(key + ":");
-                    tvwValue.setText(value);
                     tvwKey.setVisibility(View.GONE);
                     tvwValue.setVisibility(View.GONE);
             }
+                holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        setCollapsed(!isCollapsed);
+
+                    }
+                });
         }
     }
 

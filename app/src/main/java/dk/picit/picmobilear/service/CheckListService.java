@@ -40,7 +40,6 @@ public class CheckListService {
     }
 
     public void sendRequest(){
-
         HtmlRequest htmlRequest = new HtmlRequest();
         htmlRequest.execute(userAndContainerNr.getHtmlString());
     }
@@ -129,6 +128,12 @@ public class CheckListService {
     }
 
     private class HtmlRequest extends AsyncTask<String, Void, InputStream>  {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            service.clear();
+        }
 
         @Override
         protected InputStream doInBackground(String... strings) {
