@@ -88,8 +88,7 @@ public class RightFragment extends Fragment {
                     String[] eqpArray = eqpList.split("\\|");;
                     RecyclerAdapterEqId recyclerAdapterEqId = new RecyclerAdapterEqId(getContext(), Arrays.asList(eqpArray));
                     rvwEqId.setAdapter(recyclerAdapterEqId);
-                    View buttonFragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.leftfragment).getView();
-                    buttonFragmentView.findViewById(R.id.buttonReselectEqId).setVisibility(View.VISIBLE);
+                    context.sendBroadcast(new Intent("showEqidButton"));
                 }
 
                 View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();

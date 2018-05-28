@@ -79,7 +79,7 @@ public class ButtonFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getContext().registerReceiver(receiver, new IntentFilter("CheckListReady"));
+        getContext().registerReceiver(receiver, new IntentFilter("showEqidButton"));
 
         View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
         rvwContainerInformaion = fragmentView.findViewById(R.id.RvwContainerInformation);
