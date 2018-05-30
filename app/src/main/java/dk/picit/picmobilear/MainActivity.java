@@ -8,43 +8,33 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
-import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.util.Size;
-import android.view.LayoutInflater;
 import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.augumenta.agapi.AugumentaManager;
 import com.augumenta.agapi.CameraFrameProvider;
-import com.augumenta.agapi.HandPose;
 import com.augumenta.agapi.HandTransitionEvent;
 import com.augumenta.agapi.HandTransitionListener;
 import com.augumenta.agapi.Poses;
@@ -53,14 +43,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import dk.picit.picmobilear.handPose.ShowPose;
-import dk.picit.picmobilear.service.CheckListService;
 import dk.picit.picmobilear.service.VisionService;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraFrameProvider cameraFrameProvider;
     private AugumentaManager augumentaManager;
     private ShowPose showPoseListener;
+    private HandTransitionListener backTransitionListener;
     private HandTransitionListener selectTransitionListener;
     private CameraDevice mCamera = null;
     private CameraCaptureSession mSession = null;
@@ -80,25 +69,26 @@ public class MainActivity extends AppCompatActivity {
     private Surface jpegCaptureSurface = null;
     private String encodedImage;
     private BroadcastReceiver receiver;
-    private HandTransitionListener backTransitionListener = new HandTransitionListener() {
-        @Override
-        public void onTransition(HandTransitionEvent handTransitionEvent) {
-            // Close app
-            finish();
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        backTransitionListener = new HandTransitionListener() {
+            @Override
+            public void onTransition(HandTransitionEvent handTransitionEvent) {
+                // Close app
+                finish();
+            }
+        };
         showPoseListener = new ShowPose(this);
         selectTransitionListener = showPoseListener.getSelectTransitionListner();
 
         cameraFrameProvider = new CameraFrameProvider();
         cameraFrameProvider.setCameraPreview(null);
 
+        //Get camera hardware orientation and correct the display orentation,
+        // this is to correct fixed hardware angels
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         String camId = null;
         int cameraOrientation = 0;
@@ -109,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-
         cameraFrameProvider.setDisplayOrientation(cameraOrientation);
 
+        //Instantiate augumenta manager with licence key
         try {
             augumentaManager = AugumentaManager.getInstance(this, cameraFrameProvider);
         } catch (IllegalStateException e) {
@@ -124,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        //Register broadcast receiver to look for intent named OCR
         registerReceiver(receiver, new IntentFilter("OCR"));
 
         // Check if the Camera permission is already available
@@ -147,47 +138,68 @@ public class MainActivity extends AppCompatActivity {
 
     private void startAugumentaManager() {
         cameraFrameProvider.start();
-        // add listener for pose 229
+        // add listener for used hand poses
         augumentaManager.registerListener(showPoseListener, Poses.P229);
-
         augumentaManager.registerListener(showPoseListener, Poses.P141);
-
         augumentaManager.registerListener(showPoseListener, Poses.P016);
-
         augumentaManager.registerListener(showPoseListener, Poses.P201);
 
         // add listener for transition from pose 229 to 141
         augumentaManager.registerListener(selectTransitionListener, Poses.P229, Poses.P141);
-
+        // add listener for transition from pose 201 to 016
         augumentaManager.registerListener(backTransitionListener, Poses.P201, Poses.P016);
 
+        //check if camera is available by starting augumenta manager
         if (!augumentaManager.start()) {
             Toast.makeText(this, "Failed to open camera!", Toast.LENGTH_LONG).show();
         }
     }
 
+    /**
+     * Request user for permission to use camera
+     */
     private void requestCameraPermission() {
         // Request CAMERA permission from user
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
                                           PERMISSION_REQUEST_CAMERA);
     }
 
+    /**
+     * Unregister all hand pose listeners, stop camera and manager
+     */
     private void stopAugumentaManager() {
         augumentaManager.unregisterAllListeners();
         cameraFrameProvider.stop();
         augumentaManager.stop();
     }
 
+    /**
+     * Take Picture with camera
+     * @param sendToVision send picture to vision
+     */
     public void takePicture(final boolean sendToVision) {
+        //Change last boolean to save picture to SD card
+        takePicture(sendToVision, false);
+    }
 
+    /**
+     * Take picture with camera
+     * @param sendToVision send picture to vision
+     * @param savePicture save picture on SD card
+     */
+    private void takePicture(final boolean sendToVision, final boolean savePicture) {
         stopAugumentaManager();
-
         final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
+            //Selects camera 0 in id list, there is only one camera in the AR hardware,
+            // Use CameraCharacteristics.LENS_FACING for other hardware
             String camId = manager.getCameraIdList()[0];
             CameraCharacteristics cc = manager.getCameraCharacteristics(camId);
+            //fetches the surface configuration data specific to the camera,
+            // so the surfaces can be configure correctly
             StreamConfigurationMap streamConfigs =
                     cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            //fetches the jpeg sizes available for the camera
             Size[] jpegSizes = streamConfigs.getOutputSizes(ImageFormat.JPEG);
 
             //find max resulution width
@@ -215,21 +227,25 @@ public class MainActivity extends AppCompatActivity {
                     buffer.get(bytes);
                     FileOutputStream outImage = null;
 
-                    try {
-                        Date now = new Date();
-                        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
-                        File file =
-                                new File(Environment.getExternalStorageDirectory() +
-                                         "/DCIM/Camera",
-                                         "pic" + now + ".jpg");
-                        outImage = new FileOutputStream(file);
-                        outImage.write(bytes);
-                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                                 Uri.fromFile(file)));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if(savePicture)
+                    {
+                        try {
+                            Date now = new Date();
+                            android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss",
+                                                                  now);
+                            File file =
+                                    new File(Environment.getExternalStorageDirectory() +
+                                             "/DCIM/Camera",
+                                             "pic" + now + ".jpg");
+                            outImage = new FileOutputStream(file);
+                            outImage.write(bytes);
+                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                                     Uri.fromFile(file)));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     //converts the jpeg image into a base64 string for google vision
@@ -261,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
             if (ActivityCompat
                         .checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) !=
                 PackageManager.PERMISSION_GRANTED) {
-                //TODO: insert code for requesting permission if none avaliable
+                requestCameraPermission();
                 return;
             }
             //Opens the camera
@@ -328,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
                                                              null);
                                         } catch (CameraAccessException e) {
                                             //if something goes wrong with the capture,
-                                            // then cloese camera to realese it, and start augumenta
+                                            // then close camera to release it, and start augumenta
                                             e.printStackTrace();
                                             mCamera.close();
                                             startAugumentaManager();
