@@ -112,7 +112,7 @@ public class RightFragment extends Fragment {
                     checkListService.setPassword("RbiubbLchRkbQaih");
                     checkListService.setContainerNr(intent.getStringExtra("ocrResult"));
 
-                    // check internet connection 
+                    // check internet connection
                     ConnectivityManager connectivityManager = (ConnectivityManager) getActivity()
                             .getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

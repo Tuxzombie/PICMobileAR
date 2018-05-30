@@ -7,27 +7,18 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterCheckList;
-import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterContainerInformation;
-
-import static android.content.ContentValues.TAG;
-
 public class ButtonFragment extends Fragment {
-    private static final String TAG = ButtonFragment.class.getSimpleName();
-
 
     private View view;
-    private int count = 0;
     private Button buttonTakePicture, buttonReselectEqId;
     private BroadcastReceiver receiver;
     private MainActivity activity;
-    private RecyclerView rvwContainerInformaion, rvwCheckList, rvwEqIdList;
+    private RecyclerView rvwContainerInformation, rvwCheckList, rvwEqIdList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,10 +51,6 @@ public class ButtonFragment extends Fragment {
         public void onClick(View v) {
             activity.takeScreenshot(view);
             activity.takePicture(true);
-
-//            toggleVisiblityForLists(true);
-
-
         }
     };
 
@@ -71,8 +58,7 @@ public class ButtonFragment extends Fragment {
         @Override
         public void onClick(View v) {
             activity.takeScreenshot(view);
-
-            toggleVisiblityForLists(false);
+            toggleVisibilityForLists(false);
         }
     };
 
@@ -84,7 +70,7 @@ public class ButtonFragment extends Fragment {
         View fragmentView =
                 getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment)
                              .getView();
-        rvwContainerInformaion = fragmentView.findViewById(R.id.RvwContainerInformation);
+        rvwContainerInformation = fragmentView.findViewById(R.id.RvwContainerInformation);
         rvwCheckList = fragmentView.findViewById(R.id.RvwChecklist);
         rvwEqIdList = fragmentView.findViewById(R.id.RvwEqIdList);
     }
@@ -95,15 +81,19 @@ public class ButtonFragment extends Fragment {
         getContext().unregisterReceiver(receiver);
     }
 
-    private void toggleVisiblityForLists(boolean b) {
+    /**
+     * toggle list and button visibility
+     * @param b
+     */
+    private void toggleVisibilityForLists(boolean b) {
         if (b) {
             buttonReselectEqId.setVisibility(View.GONE);
-            rvwContainerInformaion.setVisibility(View.VISIBLE);
+            rvwContainerInformation.setVisibility(View.VISIBLE);
             rvwCheckList.setVisibility(View.VISIBLE);
             rvwEqIdList.setVisibility(View.GONE);
         } else {
             buttonReselectEqId.setVisibility(View.VISIBLE);
-            rvwContainerInformaion.setVisibility(View.GONE);
+            rvwContainerInformation.setVisibility(View.GONE);
             rvwCheckList.setVisibility(View.GONE);
             rvwEqIdList.setVisibility(View.VISIBLE);
         }

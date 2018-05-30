@@ -1,7 +1,6 @@
 package dk.picit.picmobilear.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +8,11 @@ import java.util.regex.Pattern;
 public class ParserService {
 
 
+    /**
+     * get container number fra string with vision result.
+     * @param s string with vision result
+     * @return  container number
+     */
     public static String visionToISO6346(String s) {
         String result = "";
 
@@ -77,6 +81,11 @@ public class ParserService {
         return result;
     }
 
+    /**
+     * returns a string, that follow the pattern: 4 letters followed by 6 og more numbers.
+     * @param string    string to match
+     * @return          string that match the pattern
+     */
     private static String matchPattern(String string) {
         String res = "";
 
@@ -89,6 +98,11 @@ public class ParserService {
         return res;
     }
 
+    /**
+     * calculate the checksum digit
+     * @param pCid  container number
+     * @return      checksum digit
+     */
     private static int getChecksumDigit(String pCid) {
         if (pCid == null || !(pCid.length() == 11 || pCid.length() == 10)) {
             return -1;
