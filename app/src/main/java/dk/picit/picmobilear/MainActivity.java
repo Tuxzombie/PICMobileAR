@@ -366,7 +366,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void takeScreenshot(View view) {
+    public void takeScreenshot(View view) {}
+
+    public void takeScreenshot(View view, int i) {
         View rootView = view.getRootView();
         rootView.setDrawingCacheEnabled(true);
         Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
