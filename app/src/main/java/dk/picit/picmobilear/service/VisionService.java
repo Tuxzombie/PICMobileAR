@@ -1,6 +1,5 @@
 package dk.picit.picmobilear.service;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -28,7 +27,6 @@ public class VisionService extends AsyncTask<String, Void, String> {
     private URL url;
     private HttpURLConnection connection;
     private final Context mContext;
-    private int responseCode;
     private String msg;
 
     public VisionService(Context mContext) {
@@ -40,8 +38,9 @@ public class VisionService extends AsyncTask<String, Void, String> {
         msg = "";
         if (img != null) {
             try {
-                url =
-                        new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
+                // connect to google vision via http connection
+                url = new URL("https://vision.googleapis.com/v1/images:annotate?" +
+                        "key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.addRequestProperty("Accept", "application/json");
@@ -51,6 +50,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
                 connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
 
+                // write body for http connection
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 writer.write(createJSONPOST(img[0]));
@@ -59,7 +59,6 @@ public class VisionService extends AsyncTask<String, Void, String> {
                 os.close();
                 connection.connect();
 
-                responseCode = connection.getResponseCode();
                 msg = streamToString(connection.getInputStream());
                 Log.d(TAG, "--doInBack--" + msg);
 
@@ -73,6 +72,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         String ocrResult = "No Internet Connection";
+        // if there are response from Google vision
         if (s != null) {
             try {
                 JSONObject jo = stringToJSON(s);
@@ -97,6 +97,11 @@ public class VisionService extends AsyncTask<String, Void, String> {
         Log.d(TAG, "--onPostexc ocrResult--" + ocrResult);
     }
 
+    /**
+     *
+     * @param img   base64 encoded string image
+     * @return      finished JSON structure in string format
+     */
     public String createJSONPOST(String img) {
         JSONObject outerJ = new JSONObject();
         try {
@@ -117,13 +122,16 @@ public class VisionService extends AsyncTask<String, Void, String> {
             reqJ.put(reqJinner);
             outerJ.put("requests", reqJ);
 
-        } catch (JSONException e) {
-
-        }
+        } catch (JSONException e) { }
 
         return outerJ.toString();
     }
 
+    /**
+     *
+     * @param is    inputStream to read from.
+     * @return      string read from inputStream
+     */
     private String streamToString(InputStream is) {
         String result = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -140,6 +148,11 @@ public class VisionService extends AsyncTask<String, Void, String> {
         return result;
     }
 
+    /**
+     *
+     * @param s JSON represented as a string
+     * @return  JSONObject from the string
+     */
     private JSONObject stringToJSON(String s) {
         JSONObject result = null;
         try {
@@ -149,12 +162,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
             for (int i = 0; i < textJ.length(); i++) {
                 JSONObject tmpJ = textJ.getJSONObject(i);
             }
-
-        } catch (JSONException e) {
-
-        }
-
-
+        } catch (JSONException e) { }
         return result;
     }
 }
