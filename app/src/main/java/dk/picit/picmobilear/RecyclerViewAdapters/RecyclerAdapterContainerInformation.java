@@ -5,13 +5,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -52,10 +50,9 @@ public class RecyclerAdapterContainerInformation extends
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext())
-                                                                   .inflate(
-                                                                           R.layout.adapter_information,
-                                                                           parent, false);
+        ConstraintLayout layout =
+                (ConstraintLayout) LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.adapter_information, parent, false);
         ViewHolder viewHolder = new ViewHolder(layout);
         return viewHolder;
     }
@@ -66,9 +63,11 @@ public class RecyclerAdapterContainerInformation extends
         TextView tvwKey = holder.constraintLayout.findViewById(R.id.tvwKey);
         TextView tvwValue = holder.constraintLayout.findViewById(R.id.tvwValue);
         if (keySetIterable.hasNext()) {
+            // get next key, and get the corresponding value
             String key = keySetIterable.next();
             String value = dataset.get(key);
             Log.d(TAG, "onBindViewHolder: " + key);
+            // set visibility for EquipmentID and the rest
             if (key.equalsIgnoreCase("EquipmentID")) {
                 tvwKey.setText(key + ":");
                 tvwValue.setText(value);
@@ -83,6 +82,7 @@ public class RecyclerAdapterContainerInformation extends
                 tvwKey.setVisibility(View.GONE);
                 tvwValue.setVisibility(View.GONE);
             }
+            // listener to chance visibility
             holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -100,6 +100,10 @@ public class RecyclerAdapterContainerInformation extends
         return dataset.size();
     }
 
+    /**
+     * reset iterator
+     * @param b
+     */
     public void setCollapsed(boolean b) {
         this.isCollapsed = b;
         Set<String> keySet = this.dataset.keySet();

@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
@@ -17,7 +16,6 @@ public class RecyclerAdapterCheckList extends
 
     private List<String> checkList;
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ConstraintLayout constraintLayout;
@@ -28,7 +26,6 @@ public class RecyclerAdapterCheckList extends
         }
     }
 
-
     public RecyclerAdapterCheckList(List<String> checkList) {
         super();
         this.checkList = checkList;
@@ -37,10 +34,9 @@ public class RecyclerAdapterCheckList extends
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext())
-                                                                   .inflate(
-                                                                           R.layout.adapter_checklist,
-                                                                           parent, false);
+        ConstraintLayout layout =
+                (ConstraintLayout) LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.adapter_checklist, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(layout);
         return viewHolder;

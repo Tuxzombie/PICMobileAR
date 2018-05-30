@@ -32,9 +32,8 @@ public class ShowPose implements HandPoseListener {
     public final RelativeMargin margin =
             new RelativeMargin(MARGIN_LEFT, MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM);
 
-    // maps poses to image of the pose
+    // maps pose groups and poses to image of the pose
     private static final SparseArray<Integer> POSE_CURSORS = new SparseArray<>();
-
     static {
         POSE_CURSORS.put(Poses.P229, R.drawable.p001);
         POSE_CURSORS.put(Poses.P141, R.drawable.p032);
