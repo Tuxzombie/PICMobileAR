@@ -2,7 +2,6 @@ package dk.picit.picmobilear.service;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
@@ -12,14 +11,9 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,11 +33,18 @@ public class CheckListService {
         this.context = context;
     }
 
+    /**
+     * send request to server
+     */
     public void sendRequest() {
         HtmlRequest htmlRequest = new HtmlRequest();
         htmlRequest.execute(userAndContainerNr.getHtmlString());
     }
 
+    /**
+     * find services in string, and add them to a list.
+     * @param serviceString string with services
+     */
     private void saveServiceString(String serviceString) {
         String[] strings = serviceString.split("\\|");
         for (int i = 0; i < strings.length; i++) {
@@ -53,7 +54,7 @@ public class CheckListService {
     }
 
     /**
-     * Find and save the information about hte container, and the check list.
+     * Find and save the information about the container, and the check list.
      *
      * @param inputStream
      * @throws IOException
@@ -66,29 +67,29 @@ public class CheckListService {
             int event = parser.getEventType();
             while (event != XmlPullParser.END_DOCUMENT) {
                 String name = parser.getName();
+                // UpdateMessage contains information about the container
                 if (XmlPullParser.START_TAG == event && name.equals("UpdateMessage")) {
                     event = parser.next();
                     name = parser.getName();
                     while (XmlPullParser.END_TAG != event || !name.equals("UpdateMessage")) {
                         Log.d(TAG, "readStream: " + name);
+                        // if service, save as service
                         if (XmlPullParser.START_TAG == event && name.equals("Services")) {
                             event = parser.next();
                             if (XmlPullParser.END_TAG != event) {
                                 saveServiceString(parser.getText());
-//                                Log.d(TAG, "readStream: " + parser.getText());
                             }
+                            // if not service, save as information about container
                         } else if (XmlPullParser.START_TAG == event) {
                             event = parser.next();
                             if (XmlPullParser.END_TAG != event) {
                                 information.put(name, parser.getText());
-//                            Log.d(TAG, "readStream: " + parser.getText());
                             }
                         }
                         event = parser.next();
                         name = parser.getName();
                     }
                 }
-
                 event = parser.next();
             }
         } catch (XmlPullParserException e) {
@@ -118,11 +119,18 @@ public class CheckListService {
         return service;
     }
 
+    /**
+     * holds user information and container number, for the http connection
+     */
     private class UserAndContainerNr {
         String username;
         String password;
         String containerNr;
 
+        /**
+         *
+         * @return String for the http connection
+         */
         String getHtmlString() {
             return "http://mobile.picit.dk/html/GetPost?psi=42.udv.webquery.test&NetUserId=" +
                    username + "&SignOnCode=" + password + "&OpCode=devtest&Eqpid=" + containerNr +
@@ -136,6 +144,7 @@ public class CheckListService {
         protected void onPreExecute() {
             super.onPreExecute();
             service.clear();
+            information.clear();
         }
 
         @Override
