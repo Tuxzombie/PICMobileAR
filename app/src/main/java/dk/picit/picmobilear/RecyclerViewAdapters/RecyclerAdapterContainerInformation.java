@@ -102,7 +102,7 @@ public class RecyclerAdapterContainerInformation extends
 
     /**
      * reset iterator
-     * @param b
+     * @param b isCollapsed
      */
     public void setCollapsed(boolean b) {
         this.isCollapsed = b;
