@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,10 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterCheckList;
@@ -29,7 +25,6 @@ import dk.picit.picmobilear.RecyclerViewAdapters.RecyclerAdapterEqId;
 import dk.picit.picmobilear.service.CheckListService;
 
 import static android.content.ContentValues.TAG;
-import static java.nio.file.Paths.get;
 
 
 public class RightFragment extends Fragment {
@@ -49,8 +44,8 @@ public class RightFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_right, container, false);
 
+        // view with container information
         rvwInformation = (RecyclerView) view.findViewById(R.id.RvwContainerInformation);
-
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext()) {
             @Override
             public boolean canScrollVertically() {
@@ -59,11 +54,12 @@ public class RightFragment extends Fragment {
         };
         rvwInformation.setLayoutManager(layoutManager);
 
-
+        // view with checklist
         rvwCheckList = (RecyclerView) view.findViewById(R.id.RvwChecklist);
         layoutManager = new LinearLayoutManager(getContext());
         rvwCheckList.setLayoutManager(layoutManager);
 
+        // view with similar container numbers
         rvwEqId = (RecyclerView) view.findViewById(R.id.RvwEqIdList);
         rvwEqId.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -73,6 +69,7 @@ public class RightFragment extends Fragment {
         checkListReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                // set adapter for container information
                 Map<String, String> informationMap = checkListService.getInformation();
                 RecyclerAdapterContainerInformation recyclerAdapterContainerInformation =
                         new RecyclerAdapterContainerInformation(context, informationMap);
@@ -80,15 +77,17 @@ public class RightFragment extends Fragment {
 
                 Log.d(TAG, "onReceive: " + checkListService.getInformation().toString());
 
+                // set adapter for checklist
                 RecyclerAdapterCheckList recyclerAdapterCheckList =
                         new RecyclerAdapterCheckList(checkListService.getService());
                 rvwCheckList.setAdapter(recyclerAdapterCheckList);
 
+                // if similar container numbers exist, make adapter for similar container numbers.
                 String eqpList = informationMap.get("EqpList");
                 if (eqpList != null) {
                     eqpList = eqpList.replaceAll("cont:", "");
                     String[] eqpArray = eqpList.split("\\|");
-                    ;
+
                     RecyclerAdapterEqId recyclerAdapterEqId =
                             new RecyclerAdapterEqId(getContext(), Arrays.asList(eqpArray));
                     rvwEqId.setAdapter(recyclerAdapterEqId);
@@ -108,10 +107,12 @@ public class RightFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (!intent.getStringExtra("ocrResult").equals("No Text Found")) {
+                    //set username, password and container number
                     checkListService.setUsername("kGHikLiikljcnknd");
                     checkListService.setPassword("RbiubbLchRkbQaih");
                     checkListService.setContainerNr(intent.getStringExtra("ocrResult"));
 
+                    // check internet connection 
                     ConnectivityManager connectivityManager = (ConnectivityManager) getActivity()
                             .getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
