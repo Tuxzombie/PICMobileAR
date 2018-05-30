@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                     mCamera = camera;
                     List<Surface> surfaces = Arrays.asList(previewSurface, jpegCaptureSurface);
                     try {
-                        //Creates session that runs camera to a no visbile surface for 30 frames, 
+                        //Creates session that runs camera to a non visible surface for 30 frames,
                         // to auto adjust white balance, color and focus, then takes a picture
                         CameraCaptureSession.StateCallback session =
                                 new CameraCaptureSession.StateCallback() {
@@ -323,9 +323,9 @@ public class MainActivity extends AppCompatActivity {
                                             request = mCamera.createCaptureRequest(
                                                     CameraDevice.TEMPLATE_STILL_CAPTURE);
                                             request.addTarget(jpegCaptureSurface);
-                                            //take a picture, and if the capture is succesfull,
+                                            //take a picture, and if the capture is successful,
                                             // then close camera to
-                                            // realese it, and start augumenta
+                                            // release it, and start augumenta
                                             CameraCaptureSession.CaptureCallback ccTakePicture =
                                                     new CameraCaptureSession.CaptureCallback() {
                                                         @Override
@@ -359,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
                                 };
                         mCamera.createCaptureSession(surfaces, session, null);
                     } catch (CameraAccessException e) {
-                        //if accesing the camera fails , then cloese camera to realese it,
+                        //if accessing the camera fails , then close camera to release it,
                         // and start augumenta
                         e.printStackTrace();
                         mCamera.close();
@@ -382,11 +382,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // remove, and remove int i onthe next function, to take screenshots.
     public void takeScreenshot(View view) {}
 
+    /**
+     * Takes screenshots
+     * @param view  from listener
+     * @param i     remove to take screenshots
+     */
     public void takeScreenshot(View view, int i) {
         View rootView = view.getRootView();
         rootView.setDrawingCacheEnabled(true);
+        // take screenshot
         Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
         rootView.setDrawingCacheEnabled(false);
         Date now = new Date();
@@ -397,9 +404,11 @@ public class MainActivity extends AppCompatActivity {
         File imageFile = new File(path);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+            // save file as jpeg
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
             fileOutputStream.flush();
             fileOutputStream.close();
+            //update media scanner
             sendBroadcast(
                     new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile)));
         } catch (FileNotFoundException e) {
