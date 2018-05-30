@@ -9,19 +9,19 @@
     tools:context=".ButtonFragment">
 
 
-        <Button
-            android:id="@+id/buttonTakePicture"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="OCR" />
+    <Button
+        android:id="@+id/buttonTakePicture"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="OCR" />
 
 
-        <Button
-            android:id="@+id/buttonReselectEqId"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="Reselect Container ID"
-            android:visibility="gone" />
+    <Button
+        android:id="@+id/buttonReselectEqId"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Reselect Container ID"
+        android:visibility="gone" />
 
 
 </LinearLayout>

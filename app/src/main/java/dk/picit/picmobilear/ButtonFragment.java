@@ -81,7 +81,9 @@ public class ButtonFragment extends Fragment {
         super.onResume();
         getContext().registerReceiver(receiver, new IntentFilter("showEqidButton"));
 
-        View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
+        View fragmentView =
+                getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment)
+                             .getView();
         rvwContainerInformaion = fragmentView.findViewById(R.id.RvwContainerInformation);
         rvwCheckList = fragmentView.findViewById(R.id.RvwChecklist);
         rvwEqIdList = fragmentView.findViewById(R.id.RvwEqIdList);
@@ -93,16 +95,13 @@ public class ButtonFragment extends Fragment {
         getContext().unregisterReceiver(receiver);
     }
 
-    private void toggleVisiblityForLists(boolean b)
-    {
-        if(b) {
+    private void toggleVisiblityForLists(boolean b) {
+        if (b) {
             buttonReselectEqId.setVisibility(View.GONE);
             rvwContainerInformaion.setVisibility(View.VISIBLE);
             rvwCheckList.setVisibility(View.VISIBLE);
             rvwEqIdList.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             buttonReselectEqId.setVisibility(View.VISIBLE);
             rvwContainerInformaion.setVisibility(View.GONE);
             rvwCheckList.setVisibility(View.GONE);

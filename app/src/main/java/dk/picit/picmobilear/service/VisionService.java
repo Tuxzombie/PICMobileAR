@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import static android.content.ContentValues.TAG;
 
 public class VisionService extends AsyncTask<String, Void, String> {
@@ -37,9 +38,10 @@ public class VisionService extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... img) {
         msg = "";
-        if(img != null) {
+        if (img != null) {
             try {
-                url = new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
+                url =
+                        new URL("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyD7ndaAYBc_Um4T45dmweJ7GYrqGnxkYNA");
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.addRequestProperty("Accept", "application/json");
@@ -59,7 +61,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
 
                 responseCode = connection.getResponseCode();
                 msg = streamToString(connection.getInputStream());
-                Log.d(TAG, "--doInBack--"+msg);
+                Log.d(TAG, "--doInBack--" + msg);
 
             } catch (java.io.IOException e) {
                 return null;
@@ -71,29 +73,31 @@ public class VisionService extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         String ocrResult = "No Internet Connection";
-        if(s != null) {
+        if (s != null) {
             try {
                 JSONObject jo = stringToJSON(s);
-                ocrResult = jo.getJSONArray("responses").getJSONObject(0).getJSONArray("textAnnotations").getJSONObject(0).getString("description");
+                ocrResult = jo.getJSONArray("responses").getJSONObject(0)
+                              .getJSONArray("textAnnotations").getJSONObject(0)
+                              .getString("description");
                 ocrResult = ParserService.visionToISO6346(ocrResult);
             } catch (JSONException e) {
                 ocrResult = "No Text Found";
             }
         }
-        if (ocrResult.isEmpty()){
-            Toast.makeText(mContext, "Response Received : " + "No Text Found", Toast.LENGTH_LONG).show();
+        if (ocrResult.isEmpty()) {
+            Toast.makeText(mContext, "Response Received : " + "No Text Found", Toast.LENGTH_LONG)
+                 .show();
         } else {
             Toast.makeText(mContext, "Response Received : " + ocrResult, Toast.LENGTH_LONG).show();
             Intent in = new Intent("OCR");
             in.putExtra("ocrResult", ocrResult);
             mContext.sendBroadcast(in);
         }
-        Log.d(TAG, "--onPostexc s--"+s);
-        Log.d(TAG, "--onPostexc ocrResult--"+ocrResult);
+        Log.d(TAG, "--onPostexc s--" + s);
+        Log.d(TAG, "--onPostexc ocrResult--" + ocrResult);
     }
 
-    public String createJSONPOST(String img)
-    {
+    public String createJSONPOST(String img) {
         JSONObject outerJ = new JSONObject();
         try {
             JSONArray reqJ = new JSONArray();
@@ -120,8 +124,7 @@ public class VisionService extends AsyncTask<String, Void, String> {
         return outerJ.toString();
     }
 
-    private String streamToString(InputStream is)
-    {
+    private String streamToString(InputStream is) {
         String result = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
@@ -130,16 +133,14 @@ public class VisionService extends AsyncTask<String, Void, String> {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
 
         }
         result = sb.toString();
         return result;
     }
 
-    private JSONObject stringToJSON(String s)
-    {
+    private JSONObject stringToJSON(String s) {
         JSONObject result = null;
         try {
             result = new JSONObject(s);

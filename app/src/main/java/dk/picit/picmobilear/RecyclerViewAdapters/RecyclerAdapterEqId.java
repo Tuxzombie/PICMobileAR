@@ -24,7 +24,7 @@ import java.util.List;
 import dk.picit.picmobilear.MainActivity;
 import dk.picit.picmobilear.R;
 
-public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqId.ViewHolder>{
+public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqId.ViewHolder> {
 
     private Context context;
     private List<String> data;
@@ -47,7 +47,7 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
     @Override
     public RecyclerAdapterEqId.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         CardView cv = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate( R.layout.adapter_eqid, parent, false);
+                                               .inflate(R.layout.adapter_eqid, parent, false);
         return new RecyclerAdapterEqId.ViewHolder(cv);
     }
 
@@ -57,7 +57,7 @@ public class RecyclerAdapterEqId extends RecyclerView.Adapter<RecyclerAdapterEqI
             @Override
             public void onClick(View view) {
                 Activity a = (Activity) context;
-                ((MainActivity)a).takeScreenshot(view);
+                ((MainActivity) a).takeScreenshot(view);
 
                 String ocrResult = data.get(holder.getAdapterPosition());
                 ocrResult = ocrResult.replaceAll(" ", "").replaceAll("\\?", "").replaceAll("-", "");

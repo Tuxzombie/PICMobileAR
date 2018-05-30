@@ -12,7 +12,8 @@ import java.util.List;
 
 import dk.picit.picmobilear.R;
 
-public class RecyclerAdapterCheckList extends RecyclerView.Adapter<RecyclerAdapterCheckList.ViewHolder> {
+public class RecyclerAdapterCheckList extends
+        RecyclerView.Adapter<RecyclerAdapterCheckList.ViewHolder> {
 
     private List<String> checkList;
 
@@ -36,7 +37,10 @@ public class RecyclerAdapterCheckList extends RecyclerView.Adapter<RecyclerAdapt
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_checklist, parent, false);
+        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext())
+                                                                   .inflate(
+                                                                           R.layout.adapter_checklist,
+                                                                           parent, false);
 
         ViewHolder viewHolder = new ViewHolder(layout);
         return viewHolder;

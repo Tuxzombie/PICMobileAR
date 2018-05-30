@@ -74,24 +74,29 @@ public class RightFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Map<String, String> informationMap = checkListService.getInformation();
-                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation = new RecyclerAdapterContainerInformation(context,informationMap);
+                RecyclerAdapterContainerInformation recyclerAdapterContainerInformation =
+                        new RecyclerAdapterContainerInformation(context, informationMap);
                 rvwInformation.setAdapter(recyclerAdapterContainerInformation);
 
                 Log.d(TAG, "onReceive: " + checkListService.getInformation().toString());
 
-                RecyclerAdapterCheckList recyclerAdapterCheckList = new RecyclerAdapterCheckList(checkListService.getService());
+                RecyclerAdapterCheckList recyclerAdapterCheckList =
+                        new RecyclerAdapterCheckList(checkListService.getService());
                 rvwCheckList.setAdapter(recyclerAdapterCheckList);
 
                 String eqpList = informationMap.get("EqpList");
                 if (eqpList != null) {
                     eqpList = eqpList.replaceAll("cont:", "");
-                    String[] eqpArray = eqpList.split("\\|");;
-                    RecyclerAdapterEqId recyclerAdapterEqId = new RecyclerAdapterEqId(getContext(), Arrays.asList(eqpArray));
+                    String[] eqpArray = eqpList.split("\\|");
+                    ;
+                    RecyclerAdapterEqId recyclerAdapterEqId =
+                            new RecyclerAdapterEqId(getContext(), Arrays.asList(eqpArray));
                     rvwEqId.setAdapter(recyclerAdapterEqId);
                     context.sendBroadcast(new Intent("showEqidButton"));
                 }
 
-                View fragmentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.rightfragment).getView();
+                View fragmentView = getActivity().getSupportFragmentManager()
+                                                 .findFragmentById(R.id.rightfragment).getView();
                 fragmentView.findViewById(R.id.RvwContainerInformation).setVisibility(View.VISIBLE);
                 fragmentView.findViewById(R.id.RvwChecklist).setVisibility(View.VISIBLE);
                 fragmentView.findViewById(R.id.RvwEqIdList).setVisibility(View.GONE);
@@ -107,10 +112,12 @@ public class RightFragment extends Fragment {
                     checkListService.setPassword("RbiubbLchRkbQaih");
                     checkListService.setContainerNr(intent.getStringExtra("ocrResult"));
 
-                    ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getActivity()
+                            .getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
                     if (activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting()) {
-                        Toast toast = Toast.makeText(getContext(), "No internet connection", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getContext(), "No internet connection",
+                                                     Toast.LENGTH_LONG);
                         toast.show();
                     } else {
                         checkListService.sendRequest();

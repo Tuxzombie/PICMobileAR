@@ -28,8 +28,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void vision_isCorrect()
-    {
+    public void vision_isCorrect() {
         Context appContext = InstrumentationRegistry.getTargetContext();
         VisionService vs = new VisionService(appContext);
 

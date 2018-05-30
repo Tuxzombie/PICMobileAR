@@ -22,14 +22,15 @@ import dk.picit.picmobilear.R;
 
 import static android.content.ContentValues.TAG;
 
-public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<RecyclerAdapterContainerInformation.ViewHolder> {
+public class RecyclerAdapterContainerInformation extends
+        RecyclerView.Adapter<RecyclerAdapterContainerInformation.ViewHolder> {
 
     private Map<String, String> dataset;
     private Iterator<String> keySetIterable;
     private Context context;
     private boolean isCollapsed;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ConstraintLayout constraintLayout;
 
@@ -51,7 +52,10 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_information, parent, false);
+        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext())
+                                                                   .inflate(
+                                                                           R.layout.adapter_information,
+                                                                           parent, false);
         ViewHolder viewHolder = new ViewHolder(layout);
         return viewHolder;
     }
@@ -61,7 +65,7 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
     public void onBindViewHolder(final ViewHolder holder, int position) {
         TextView tvwKey = holder.constraintLayout.findViewById(R.id.tvwKey);
         TextView tvwValue = holder.constraintLayout.findViewById(R.id.tvwValue);
-        if(keySetIterable.hasNext()) {
+        if (keySetIterable.hasNext()) {
             String key = keySetIterable.next();
             String value = dataset.get(key);
             Log.d(TAG, "onBindViewHolder: " + key);
@@ -76,18 +80,18 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
                 tvwKey.setVisibility(View.VISIBLE);
                 tvwValue.setVisibility(View.VISIBLE);
             } else {
-                    tvwKey.setVisibility(View.GONE);
-                    tvwValue.setVisibility(View.GONE);
+                tvwKey.setVisibility(View.GONE);
+                tvwValue.setVisibility(View.GONE);
             }
-                holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Activity a = (Activity) context;
-                        ((MainActivity)a).takeScreenshot(view);
-                        setCollapsed(!isCollapsed);
+            holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Activity a = (Activity) context;
+                    ((MainActivity) a).takeScreenshot(view);
+                    setCollapsed(!isCollapsed);
 
-                    }
-                });
+                }
+            });
         }
     }
 
@@ -96,8 +100,7 @@ public class RecyclerAdapterContainerInformation extends RecyclerView.Adapter<Re
         return dataset.size();
     }
 
-    public void setCollapsed(boolean b)
-    {
+    public void setCollapsed(boolean b) {
         this.isCollapsed = b;
         Set<String> keySet = this.dataset.keySet();
         this.keySetIterable = keySet.iterator();

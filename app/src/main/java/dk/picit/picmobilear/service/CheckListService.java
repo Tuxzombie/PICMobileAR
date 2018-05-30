@@ -35,18 +35,18 @@ public class CheckListService {
     private Map<String, String> information = new HashMap<>();
     private Context context;
 
-    public CheckListService(Context context){
+    public CheckListService(Context context) {
         this.context = context;
     }
 
-    public void sendRequest(){
+    public void sendRequest() {
         HtmlRequest htmlRequest = new HtmlRequest();
         htmlRequest.execute(userAndContainerNr.getHtmlString());
     }
 
-    private void saveServiceString(String serviceString){
+    private void saveServiceString(String serviceString) {
         String[] strings = serviceString.split("\\|");
-        for(int i = 0; i< strings.length; i++){
+        for (int i = 0; i < strings.length; i++) {
             String[] service = strings[i].split(":");
             this.service.add(service[1]);
         }
@@ -54,6 +54,7 @@ public class CheckListService {
 
     /**
      * Find and save the information about hte container, and the check list.
+     *
      * @param inputStream
      * @throws IOException
      */
@@ -63,22 +64,22 @@ public class CheckListService {
         try {
             parser.setInput(inputStream, null);
             int event = parser.getEventType();
-            while (event != XmlPullParser.END_DOCUMENT){
+            while (event != XmlPullParser.END_DOCUMENT) {
                 String name = parser.getName();
-                if (XmlPullParser.START_TAG == event && name.equals("UpdateMessage")){
+                if (XmlPullParser.START_TAG == event && name.equals("UpdateMessage")) {
                     event = parser.next();
                     name = parser.getName();
-                    while (XmlPullParser.END_TAG != event || !name.equals("UpdateMessage")){
+                    while (XmlPullParser.END_TAG != event || !name.equals("UpdateMessage")) {
                         Log.d(TAG, "readStream: " + name);
-                        if(XmlPullParser.START_TAG == event && name.equals("Services")){
+                        if (XmlPullParser.START_TAG == event && name.equals("Services")) {
                             event = parser.next();
-                            if(XmlPullParser.END_TAG != event){
+                            if (XmlPullParser.END_TAG != event) {
                                 saveServiceString(parser.getText());
 //                                Log.d(TAG, "readStream: " + parser.getText());
                             }
-                        } else if(XmlPullParser.START_TAG == event){
+                        } else if (XmlPullParser.START_TAG == event) {
                             event = parser.next();
-                            if(XmlPullParser.END_TAG != event){
+                            if (XmlPullParser.END_TAG != event) {
                                 information.put(name, parser.getText());
 //                            Log.d(TAG, "readStream: " + parser.getText());
                             }
@@ -97,15 +98,15 @@ public class CheckListService {
         }
     }
 
-    public void setUsername(String username){
+    public void setUsername(String username) {
         userAndContainerNr.username = username;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String password) {
         userAndContainerNr.password = password;
     }
 
-    public void setContainerNr(String containerNr){
+    public void setContainerNr(String containerNr) {
         userAndContainerNr.containerNr = containerNr;
     }
 
@@ -117,17 +118,19 @@ public class CheckListService {
         return service;
     }
 
-    private class UserAndContainerNr{
+    private class UserAndContainerNr {
         String username;
         String password;
         String containerNr;
 
-        String getHtmlString(){
-         return "http://mobile.picit.dk/html/GetPost?psi=42.udv.webquery.test&NetUserId=" + username + "&SignOnCode=" + password + "&OpCode=devtest&Eqpid=" + containerNr + "&terminal=Q&";
+        String getHtmlString() {
+            return "http://mobile.picit.dk/html/GetPost?psi=42.udv.webquery.test&NetUserId=" +
+                   username + "&SignOnCode=" + password + "&OpCode=devtest&Eqpid=" + containerNr +
+                   "&terminal=Q&";
         }
     }
 
-    private class HtmlRequest extends AsyncTask<String, Void, InputStream>  {
+    private class HtmlRequest extends AsyncTask<String, Void, InputStream> {
 
         @Override
         protected void onPreExecute() {

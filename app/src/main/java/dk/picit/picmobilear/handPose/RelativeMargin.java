@@ -29,70 +29,66 @@ import android.graphics.PointF;
  * translating between the camera coordinates and screen coordinates.
  */
 public class RelativeMargin {
-	float top = 0.0f;
-	float bottom = 0.0f;
-	float left = 0.0f;
-	float right = 0.0f;
+    float top = 0.0f;
+    float bottom = 0.0f;
+    float left = 0.0f;
+    float right = 0.0f;
 
-	float width = 1.0f;
-	float height = 1.0f;
+    float width = 1.0f;
+    float height = 1.0f;
 
-	public RelativeMargin() {
-		setMargin(0);
-	}
+    public RelativeMargin() {
+        setMargin(0);
+    }
 
-	public RelativeMargin(float margin) {
-		setMargin(margin);
-	}
+    public RelativeMargin(float margin) {
+        setMargin(margin);
+    }
 
-	public RelativeMargin(float horizontal, float vertical) {
-		setMargin(horizontal, vertical);
-	}
+    public RelativeMargin(float horizontal, float vertical) {
+        setMargin(horizontal, vertical);
+    }
 
-	public RelativeMargin(float left, float top, float right, float bottom) {
-		setMargin(left, top, right, bottom);
-	}
+    public RelativeMargin(float left, float top, float right, float bottom) {
+        setMargin(left, top, right, bottom);
+    }
 
-	public void setMargin(float margin) {
-		setMargin(margin, margin, margin, margin);
-	}
+    public void setMargin(float margin) {
+        setMargin(margin, margin, margin, margin);
+    }
 
-	public void setMargin(float horizontal, float vertical) {
-		setMargin(horizontal, vertical, horizontal, vertical);
-	}
+    public void setMargin(float horizontal, float vertical) {
+        setMargin(horizontal, vertical, horizontal, vertical);
+    }
 
-	public void setMargin(float left, float top, float right, float bottom) {
-		this.left = left;
-		this.top = top;
-		this.right = right;
-		this.bottom = bottom;
-		this.width = 1 - (this.left + this.right);
-		this.height = 1 - (this.top + this.bottom);
-	}
+    public void setMargin(float left, float top, float right, float bottom) {
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        this.width = 1 - (this.left + this.right);
+        this.height = 1 - (this.top + this.bottom);
+    }
 
-	public PointF translate(PointF point) {
-		return translate(point.x, point.y);
-	}
+    public PointF translate(PointF point) {
+        return translate(point.x, point.y);
+    }
 
-	public PointF translate(float x, float y) {
-		return new PointF(translateX(x), translateY(y));
-	}
+    public PointF translate(float x, float y) {
+        return new PointF(translateX(x), translateY(y));
+    }
 
-	public float translateX(float x) {
-		return x * this.width + this.left;
-	}
+    public float translateX(float x) {
+        return x * this.width + this.left;
+    }
 
-	public float translateY(float y) {
-		return y * this.height + this.top;
-	}
+    public float translateY(float y) {
+        return y * this.height + this.top;
+    }
 
-	@Override
-	public String toString() {
-		return "RelativeMargin{" +
-				"top=" + top +
-				", bottom=" + bottom +
-				", left=" + left +
-				", right=" + right +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "RelativeMargin{" + "top=" + top + ", bottom=" + bottom + ", left=" + left +
+               ", right=" + right + '}';
+    }
 }

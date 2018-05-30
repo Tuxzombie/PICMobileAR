@@ -29,10 +29,12 @@ public class ShowPose implements HandPoseListener {
 
     // RelativeMargin maps the camera view so that it's possible to interact with views near
     // the edges
-    public final RelativeMargin margin = new RelativeMargin(MARGIN_LEFT, MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM);
+    public final RelativeMargin margin =
+            new RelativeMargin(MARGIN_LEFT, MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM);
 
     // maps poses to image of the pose
     private static final SparseArray<Integer> POSE_CURSORS = new SparseArray<>();
+
     static {
         POSE_CURSORS.put(Poses.P229, R.drawable.p001);
         POSE_CURSORS.put(Poses.P141, R.drawable.p032);
@@ -54,7 +56,7 @@ public class ShowPose implements HandPoseListener {
     private int cursorDeltaY = 0;
 
 
-    public ShowPose(Activity activity){
+    public ShowPose(Activity activity) {
         // gets the layout of the activity
         this.activity = activity;
         frameLayout = (FrameLayout) activity.findViewById(R.id.frameLayout);
@@ -65,6 +67,7 @@ public class ShowPose implements HandPoseListener {
 
     /**
      * Move cursor view based on the pose event
+     *
      * @param event pose event
      */
     private void moveCursor(HandPoseEvent event) {
@@ -94,6 +97,7 @@ public class ShowPose implements HandPoseListener {
     /**
      * Update cursor views based on the event
      * Positions the cursor on the screen
+     *
      * @param handPoseEvent pose event
      */
     private void updateCursor(HandPoseEvent handPoseEvent, ImageView image) {
@@ -101,9 +105,10 @@ public class ShowPose implements HandPoseListener {
         int x = (int) (margin.translateX(handPoseEvent.rect.centerX()) * frameLayout.getWidth());
         int y = (int) (margin.translateY(handPoseEvent.rect.centerY()) * frameLayout.getHeight());
 
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(POSE_IMAGE_SIZE, POSE_IMAGE_SIZE);
-        lp.leftMargin = x - (POSE_IMAGE_SIZE/2);
-        lp.topMargin = y - (POSE_IMAGE_SIZE/2);
+        FrameLayout.LayoutParams lp =
+                new FrameLayout.LayoutParams(POSE_IMAGE_SIZE, POSE_IMAGE_SIZE);
+        lp.leftMargin = x - (POSE_IMAGE_SIZE / 2);
+        lp.topMargin = y - (POSE_IMAGE_SIZE / 2);
 
         image.setLayoutParams(lp);
     }
@@ -111,8 +116,9 @@ public class ShowPose implements HandPoseListener {
 
     /**
      * Called when a pose is detected
+     *
      * @param handPoseEvent
-     * @param newDetect is it a new pose
+     * @param newDetect     is it a new pose
      */
     @Override
     public void onDetected(final HandPoseEvent handPoseEvent, final boolean newDetect) {
@@ -120,11 +126,11 @@ public class ShowPose implements HandPoseListener {
         frameLayout.post(new Runnable() {
             @Override
             public void run() {
-                if(newDetect){
+                if (newDetect) {
                     ImageView image = new ImageView(activity);
                     image.setImageResource(POSE_CURSORS.get(handPoseEvent.handpose.pose()));
                     // rotate cursor if right hand is used
-                    if(handPoseEvent.handpose.handside() == HandPose.HandSide.RIGHT){
+                    if (handPoseEvent.handpose.handside() == HandPose.HandSide.RIGHT) {
                         image.setRotationY(180);
                     }
 
@@ -136,9 +142,9 @@ public class ShowPose implements HandPoseListener {
                     poseImageArray.put(handPoseEvent.id, image);
 
                     frameLayout.addView(image);
-                } else{
+                } else {
                     ImageView image = poseImageArray.get(handPoseEvent.id);
-                    if(image!=null){
+                    if (image != null) {
 
                         updateCursor(handPoseEvent, image);
                         moveCursor(handPoseEvent);
@@ -150,6 +156,7 @@ public class ShowPose implements HandPoseListener {
 
     /**
      * when the handpose is lost from detection
+     *
      * @param handPoseEvent
      */
     @Override
@@ -158,7 +165,7 @@ public class ShowPose implements HandPoseListener {
             @Override
             public void run() {
                 ImageView image = poseImageArray.get(handPoseEvent.id);
-                if(image != null){
+                if (image != null) {
                     frameLayout.removeView(image);
                 }
             }
@@ -187,9 +194,13 @@ public class ShowPose implements HandPoseListener {
                 public void run() {
                     long now = SystemClock.uptimeMillis();
                     // press event at (cursorX,cursorY)
-                    frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, cursorX, cursorY, 0));
+                    frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now,
+                                                                      MotionEvent.ACTION_DOWN,
+                                                                      cursorX, cursorY, 0));
                     // release event at (cursorX,cursorY)
-                    frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now +1, MotionEvent.ACTION_UP, cursorX, cursorY, 0));
+                    frameLayout.dispatchTouchEvent(MotionEvent.obtain(now, now + 1,
+                                                                      MotionEvent.ACTION_UP,
+                                                                      cursorX, cursorY, 0));
                 }
             });
         }
